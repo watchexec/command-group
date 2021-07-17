@@ -29,7 +29,7 @@ use std::process::Command;
 use command_group::CommandGroup;
 
 let child = Command::new("watch").arg("ls").group_spawn()?;
-let status = child.group_wait()?;
+let status = child.wait()?;
 dbg!(status);
 ```
 
@@ -46,6 +46,6 @@ use async_std::process::Command;
 use command_group::AsyncCommandGroup;
 
 let child = Command::new("watch").arg("ls").group_spawn().await?;
-let status = child.group_wait().await?;
+let status = child.wait().await?;
 dbg!(status);
 ```
