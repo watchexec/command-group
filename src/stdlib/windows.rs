@@ -98,13 +98,13 @@ fn resume_threads(child_process: HANDLE) -> Result<()> {
 				let thread_handle = OpenThread(0x0002, 0, entry.th32ThreadID);
 				ResumeThread(thread_handle);
 				CloseHandle(thread_handle);
+			}
+
+			result = Thread32Next(h, &mut entry);
+		}
+
+		CloseHandle(h);
 	}
 
-	fn group_output(&mut self) -> Result<Output> {
-		todo!()
-	}
-
-	fn group_status(&mut self) -> Result<ExitStatus> {
-		todo!()
-	}
+	Ok(())
 }

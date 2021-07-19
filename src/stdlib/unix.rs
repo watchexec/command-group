@@ -1,7 +1,7 @@
 use std::{
 	io::{Error, Result},
 	os::unix::process::CommandExt,
-	process::{Command, ExitStatus, Output},
+	process::Command,
 };
 
 use crate::{CommandGroup, GroupChild};
@@ -14,14 +14,5 @@ impl CommandGroup for Command {
 		}
 
 		self.spawn().map(GroupChild::new)
-	}
-
-	fn group_output(&mut self) -> Result<Output> {
-		self.group_spawn()
-			.and_then(|child| child.wait_with_output())
-	}
-
-	fn group_status(&mut self) -> Result<ExitStatus> {
-		self.group_spawn().and_then(|mut child| child.wait())
 	}
 }

@@ -64,7 +64,10 @@ pub trait CommandGroup {
 	///
 	/// assert!(output.status.success());
 	/// ```
-	fn group_output(&mut self) -> Result<Output>;
+	fn group_output(&mut self) -> Result<Output> {
+		self.group_spawn()
+			.and_then(|child| child.wait_with_output())
+	}
 
 	/// Executes a command as a child process group, waiting for it to finish and
 	/// collecting its status.
@@ -88,5 +91,7 @@ pub trait CommandGroup {
 	///
 	/// assert!(status.success());
 	/// ```
-	fn group_status(&mut self) -> Result<ExitStatus>;
+	fn group_status(&mut self) -> Result<ExitStatus> {
+		self.group_spawn().and_then(|mut child| child.wait())
+	}
 }
