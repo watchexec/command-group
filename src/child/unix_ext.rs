@@ -20,7 +20,7 @@ pub trait UnixChildExt {
 	///
 	/// ```no_run
 	/// use std::process::Command;
-	/// use command_group::UnixChildExt;
+	/// use command_group::{UnixChildExt, Signal};
 	///
 	/// let mut command = Command::new("yes");
 	/// if let Ok(mut child) = command.spawn() {
@@ -34,7 +34,7 @@ pub trait UnixChildExt {
 	///
 	/// ```no_run
 	/// use std::process::Command;
-	/// use command_group::{CommandGroup, UnixChildExt};
+	/// use command_group::{CommandGroup, UnixChildExt, Signal};
 	///
 	/// let mut command = Command::new("yes");
 	/// if let Ok(mut child) = command.group_spawn() {

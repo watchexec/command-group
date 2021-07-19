@@ -79,7 +79,9 @@ impl GroupChild {
 	///
 	/// let mut child = Command::new("ls").group_spawn().expect("ls command didn't start");
 	/// let mut output = String::new();
-	/// child.inner().stdout.read_to_string(&mut output).expect("failed to read from child");
+	/// if let Some(mut out) = child.inner().stdout.take() {
+	///     out.read_to_string(&mut output).expect("failed to read from child");
+	/// }
 	/// println!("output: {}", output);
 	/// ```
 	pub fn inner(&mut self) -> &mut Child {
@@ -102,7 +104,9 @@ impl GroupChild {
 	/// use command_group::CommandGroup;
 	///
 	/// let mut child = Command::new("cat").group_spawn().expect("cat command didn't start");
-	/// child.into_inner().stdin.write_all(b"Woohoo!").expect("failed to write");
+	/// if let Some(mut din) = child.inner().stdin.take() {
+	///      din.write_all(b"Woohoo!").expect("failed to write");
+	/// }
 	/// ```
 	pub fn into_inner(self) -> Child {
 		self.imp.into_inner()
