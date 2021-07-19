@@ -9,9 +9,18 @@ pub(self) use unix::ChildImp;
 #[cfg(windows)]
 pub(self) use windows::ChildImp;
 
+#[cfg(unix)]
+#[doc(inline)]
+pub use unix_ext::UnixChildExt;
+
+#[cfg(unix)]
+/// Re-export of `Signal` from [nix] for convenience (with [`UnixChildExt`]).
+pub use nix::sys::signal::Signal;
 
 #[cfg(unix)]
 mod unix;
+#[cfg(unix)]
+mod unix_ext;
 #[cfg(windows)]
 mod windows;
 
