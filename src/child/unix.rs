@@ -73,7 +73,7 @@ impl ChildImp {
 		let res =
 			unsafe { libc::waitpid(negpid.into(), &mut status as *mut libc::c_int, flag.bits()) };
 
-		Errno::result(res).map_err(Error::from)
+		Errno::result(res).map_err(Error::from).map(|_| status)
 	}
 
 	pub fn wait(&mut self) -> Result<ExitStatus> {
