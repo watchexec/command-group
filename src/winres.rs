@@ -1,5 +1,5 @@
 use std::io::{Error, Result};
-use winapi::{shared::minwindef::BOOL, um::winnt::HANDLE};
+use winapi::{shared::minwindef::{BOOL, DWORD}, um::winnt::HANDLE};
 
 pub(crate) fn res_null(handle: HANDLE) -> Result<HANDLE> {
 	if handle.is_null() {
@@ -14,5 +14,13 @@ pub(crate) fn res_bool(ret: BOOL) -> Result<()> {
 		Err(Error::last_os_error())
 	} else {
 		Ok(())
+	}
+}
+
+pub(crate) fn res_neg(ret: DWORD) -> Result<DWORD> {
+	if ret == DWORD::MAX {
+		Err(Error::last_os_error())
+	} else {
+		Ok(ret)
 	}
 }

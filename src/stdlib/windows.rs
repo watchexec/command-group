@@ -78,33 +78,29 @@ impl CommandGroup for Command {
 // This is pretty terrible, but it's either this or we re-implement all of Rust's std::process just
 // to get at PROCESS_INFORMATION!
 fn resume_threads(child_process: HANDLE) -> Result<()> {
-	unsafe {
-		let child_id = GetProcessId(child_process);
+	let child_id = unsafe { GetProcessId(child_process) };
 
-		let h = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
-		let mut entry = THREADENTRY32 {
-			dwSize: 28,
-			cntUsage: 0,
-			th32ThreadID: 0,
-			th32OwnerProcessID: 0,
-			tpBasePri: 0,
-			tpDeltaPri: 0,
-			dwFlags: 0,
-		};
+	let h = res_null(unsafe { CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0) })?;
+	let mut entry = THREADENTRY32 {
+		dwSize: 28,
+		cntUsage: 0,
+		th32ThreadID: 0,
+		th32OwnerProcessID: 0,
+		tpBasePri: 0,
+		tpDeltaPri: 0,
+		dwFlags: 0,
+	};
 
-		let mut result = Thread32First(h, &mut entry);
-		while result != 0 {
-			if entry.th32OwnerProcessID == child_id {
-				let thread_handle = OpenThread(0x0002, 0, entry.th32ThreadID);
-				ResumeThread(thread_handle);
-				CloseHandle(thread_handle);
-			}
-
-			result = Thread32Next(h, &mut entry);
+	let mut res = res_bool(unsafe { Thread32First(h, &mut entry) });
+	while res.is_ok() {
+		if entry.th32OwnerProcessID == child_id {
+			let thread_handle = res_null(unsafe { OpenThread(0x0002, 0, entry.th32ThreadID) })?;
+			res_neg(unsafe { ResumeThread(thread_handle) })?;
+			res_bool(unsafe { CloseHandle(thread_handle) })?;
 		}
 
-		CloseHandle(h);
+		res = res_bool(unsafe { Thread32Next(h, &mut entry) });
 	}
 
-	Ok(())
+	res_bool(unsafe { CloseHandle(h) })
 }
