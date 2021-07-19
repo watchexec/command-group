@@ -1,3 +1,5 @@
+#![cfg(unix)]
+
 use command_group::CommandGroup;
 use std::{
 	io::{Read, Result, Write},
