@@ -44,7 +44,9 @@ fn inner_read_stdout_group() -> Result<()> {
 
 #[test]
 fn into_inner_write_stdin_normal() -> Result<()> {
-	let mut child = Command::new("type")
+	let mut child = Command::new("cmd")
+		.arg("/C")
+		.arg("copy con")
 		.stdin(Stdio::piped())
 		.stdout(Stdio::piped())
 		.spawn()?;
@@ -64,7 +66,9 @@ fn into_inner_write_stdin_normal() -> Result<()> {
 
 #[test]
 fn into_inner_write_stdin_group() -> Result<()> {
-	let mut child = Command::new("type")
+	let mut child = Command::new("cmd")
+		.arg("/C")
+		.arg("copy con")
 		.stdin(Stdio::piped())
 		.stdout(Stdio::piped())
 		.group_spawn()?
