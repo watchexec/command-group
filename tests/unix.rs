@@ -125,7 +125,7 @@ fn wait_group() -> Result<()> {
 
 #[test]
 fn wait_with_output_normal() -> Result<()> {
-	let mut child = Command::new("echo")
+	let child = Command::new("echo")
 		.arg("hello")
 		.stdout(Stdio::piped())
 		.spawn()?;
@@ -139,7 +139,7 @@ fn wait_with_output_normal() -> Result<()> {
 
 #[test]
 fn wait_with_output_group() -> Result<()> {
-	let mut child = Command::new("echo")
+	let child = Command::new("echo")
 		.arg("hello")
 		.stdout(Stdio::piped())
 		.group_spawn()?;
