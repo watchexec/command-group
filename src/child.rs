@@ -74,10 +74,10 @@ impl GroupChild {
 	///
 	/// ```no_run
 	/// use std::io::Read;
-	/// use std::process::Command;
+	/// use std::process::{Command, Stdio};
 	/// use command_group::CommandGroup;
 	///
-	/// let mut child = Command::new("ls").group_spawn().expect("ls command didn't start");
+	/// let mut child = Command::new("ls").stdout(Stdio::piped()).group_spawn().expect("ls command didn't start");
 	/// let mut output = String::new();
 	/// if let Some(mut out) = child.inner().stdout.take() {
 	///     out.read_to_string(&mut output).expect("failed to read from child");
@@ -100,11 +100,11 @@ impl GroupChild {
 	///
 	/// ```no_run
 	/// use std::io::Write;
-	/// use std::process::Command;
+	/// use std::process::{Command, Stdio};
 	/// use command_group::CommandGroup;
 	///
-	/// let mut child = Command::new("cat").group_spawn().expect("cat command didn't start");
-	/// if let Some(mut din) = child.inner().stdin.take() {
+	/// let mut child = Command::new("cat").stdin(Stdio::piped()).group_spawn().expect("cat command didn't start");
+	/// if let Some(mut din) = child.into_inner().stdin.take() {
 	///      din.write_all(b"Woohoo!").expect("failed to write");
 	/// }
 	/// ```
