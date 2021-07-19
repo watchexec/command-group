@@ -10,6 +10,9 @@
 mod child;
 pub mod stdlib;
 
+#[cfg(windows)]
+pub(crate) mod winres;
+
 #[doc(inline)]
 pub use child::*;
 pub use stdlib::CommandGroup;

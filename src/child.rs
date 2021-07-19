@@ -17,6 +17,9 @@ pub use unix_ext::UnixChildExt;
 /// Re-export of `Signal` from [nix] for convenience (with [`UnixChildExt`]).
 pub use nix::sys::signal::Signal;
 
+#[cfg(windows)]
+use winapi::um::winnt::HANDLE;
+
 #[cfg(unix)]
 mod unix;
 #[cfg(unix)]
@@ -56,9 +59,17 @@ impl fmt::Debug for GroupChild {
 }
 
 impl GroupChild {
+	#[cfg(unix)]
 	pub(crate) fn new(inner: Child) -> Self {
 		Self {
 			imp: ChildImp::new(inner),
+		}
+	}
+
+	#[cfg(windows)]
+	pub(crate) fn new(inner: Child, j: HANDLE, c: HANDLE) -> Self {
+		Self {
+			imp: ChildImp::new(inner, j, c),
 		}
 	}
 

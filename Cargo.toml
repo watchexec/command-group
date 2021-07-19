@@ -27,4 +27,12 @@ version = "0.22.0"
 
 [target.'cfg(windows)'.dependencies.winapi]
 version = "0.3.9"
-features = ["ioapiset", "jobapi2", "tlhelp32"]
+features = [
+	"impl-default",
+	"handleapi",
+	"ioapiset",
+	"jobapi2",
+	"processthreadsapi",
+	"tlhelp32",
+	"winbase",
+]

@@ -20,6 +20,8 @@ pub trait CommandGroup {
 	///
 	/// By default, stdin, stdout and stderr are inherited from the parent.
 	///
+	/// On Windows, this creates a job object instead of a POSIX process group.
+	///
 	/// # Examples
 	///
 	/// Basic usage:
@@ -41,6 +43,8 @@ pub trait CommandGroup {
 	/// resulting output). Stdin is not inherited from the parent and any
 	/// attempt by the child process to read from the stdin stream will result
 	/// in the stream immediately closing.
+	///
+	/// On Windows, this creates a job object instead of a POSIX process group.
 	///
 	/// # Examples
 	///
@@ -66,6 +70,8 @@ pub trait CommandGroup {
 	/// collecting its status.
 	///
 	/// By default, stdin, stdout and stderr are inherited from the parent.
+	///
+	/// On Windows, this creates a job object instead of a POSIX process group.
 	///
 	/// # Examples
 	///
