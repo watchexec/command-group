@@ -87,6 +87,7 @@ fn into_inner_write_stdin_group() -> Result<()> {
 fn kill_and_try_wait_normal() -> Result<()> {
 	let mut command = Command::new("yes");
 	let mut child = command.spawn()?;
+	assert!(child.try_wait()?.is_none());
 	child.kill()?;
 	sleep(Duration::from_millis(50));
 	assert!(child.try_wait()?.is_some());
@@ -97,6 +98,7 @@ fn kill_and_try_wait_normal() -> Result<()> {
 fn kill_and_try_wait_group() -> Result<()> {
 	let mut command = Command::new("yes");
 	let mut child = command.group_spawn()?;
+	assert!(child.try_wait()?.is_none());
 	child.kill()?;
 	sleep(Duration::from_millis(50));
 	assert!(child.try_wait()?.is_some());
