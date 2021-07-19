@@ -1,7 +1,19 @@
 use std::{
-	io::Result,
+	io::{Read, Result},
 	process::{Child, ExitStatus, Output},
+	fmt,
 };
+
+#[cfg(unix)]
+pub(self) use unix::ChildImp;
+#[cfg(windows)]
+pub(self) use windows::ChildImp;
+
+
+#[cfg(unix)]
+mod unix;
+#[cfg(windows)]
+mod windows;
 
 /// Representation of a running or exited child process group.
 ///
@@ -24,13 +36,28 @@ use std::{
 ///
 /// assert!(ecode.success());
 /// ```
-#[derive(Debug)]
 pub struct GroupChild {
-	inner: Child,
+	imp: ChildImp,
+}
+
+impl fmt::Debug for GroupChild {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		f.debug_struct("GroupChild").finish()
+	}
 }
 
 impl GroupChild {
+	pub(crate) fn new(inner: Child) -> Self {
+		Self {
+			imp: ChildImp::new(inner),
+		}
+	}
+
 	/// Returns the stdlib [`Child`] object.
+	///
+	/// Note that the inner child may not be in the same state as this output child, due to how
+	/// methods like `wait` and `kill` are implemented. It is not recommended to use this method
+	/// _after_ using any of the other methods on this struct.
 	///
 	/// # Examples
 	///
@@ -47,10 +74,14 @@ impl GroupChild {
 	/// println!("output: {}", output);
 	/// ```
 	pub fn inner(&mut self) -> &mut Child {
-		&mut self.inner
+		self.imp.inner()
 	}
 
 	/// Consumes itself and returns the stdlib [`Child`] object.
+	///
+	/// Note that the inner child may not be in the same state as this output child, due to how
+	/// methods like `wait` and `kill` are implemented. It is not recommended to use this method
+	/// _after_ using any of the other methods on this struct.
 	///
 	/// # Examples
 	///
@@ -65,7 +96,7 @@ impl GroupChild {
 	/// child.into_inner().stdin.write_all(b"Woohoo!").expect("failed to write");
 	/// ```
 	pub fn into_inner(self) -> Child {
-		self.inner
+		self.imp.into_inner()
 	}
 
 	/// Forces the child process group to exit. If the group has already exited, an [`InvalidInput`]
@@ -93,7 +124,7 @@ impl GroupChild {
 	///
 	/// [`InvalidInput`]: io::ErrorKind::InvalidInput
 	pub fn kill(&mut self) -> Result<()> {
-		todo!()
+		self.imp.kill()
 	}
 
 	/// Returns the OS-assigned process group identifier.
@@ -116,7 +147,7 @@ impl GroupChild {
 	/// }
 	/// ```
 	pub fn id(&self) -> u32 {
-		todo!()
+		self.imp.id()
 	}
 
 	/// Waits for the child group to exit completely, returning the status that
@@ -141,7 +172,8 @@ impl GroupChild {
 	/// }
 	/// ```
 	pub fn wait(&mut self) -> Result<ExitStatus> {
-		todo!()
+		drop(self.imp.take_stdin());
+		self.imp.wait()
 	}
 
 	/// Attempts to collect the exit status of the child if it has already
@@ -170,7 +202,7 @@ impl GroupChild {
 	/// }
 	/// ```
 	pub fn try_wait(&mut self) -> Result<Option<ExitStatus>> {
-		todo!()
+		self.imp.try_wait()
 	}
 
 	/// Simultaneously waits for the child to exit and collect all remaining
@@ -199,6 +231,24 @@ impl GroupChild {
 	/// ```
 	///
 	pub fn wait_with_output(mut self) -> Result<Output> {
-		todo!("{:?}", self)
+		drop(self.imp.take_stdin());
+
+        let (mut stdout, mut stderr) = (Vec::new(), Vec::new());
+        match (self.imp.take_stdout(), self.imp.take_stderr()) {
+            (None, None) => {}
+            (Some(mut out), None) => {
+                out.read_to_end(&mut stdout)?;
+            }
+            (None, Some(mut err)) => {
+                err.read_to_end(&mut stderr)?;
+            }
+            (Some(out), Some(err)) => {
+                let res = ChildImp::read_both(out, &mut stdout, err, &mut stderr);
+                res.unwrap();
+            }
+        }
+
+        let status = self.imp.wait()?;
+        Ok(Output { status, stdout, stderr })
 	}
 }

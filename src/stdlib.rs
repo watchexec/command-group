@@ -1,10 +1,20 @@
+//! Implementation of process group extensions for the
+//! [standard library `Command` type](std::process::Command).
+
 use std::{
 	io::Result,
-	process::{Command, ExitStatus, Output},
+	process::{ExitStatus, Output},
 };
 
 use crate::GroupChild;
 
+#[cfg(target_family = "windows")]
+mod windows;
+
+#[cfg(target_family = "unix")]
+mod unix;
+
+/// Extensions for [`Command`](std::process::Command) adding support for process groups.
 pub trait CommandGroup {
 	/// Executes the command as a child process group, returning a handle to it.
 	///
@@ -73,18 +83,4 @@ pub trait CommandGroup {
 	/// assert!(status.success());
 	/// ```
 	fn group_status(&mut self) -> Result<ExitStatus>;
-}
-
-impl CommandGroup for Command {
-	fn group_spawn(&mut self) -> Result<GroupChild> {
-		todo!()
-	}
-
-	fn group_output(&mut self) -> Result<Output> {
-		todo!()
-	}
-
-	fn group_status(&mut self) -> Result<ExitStatus> {
-		todo!()
-	}
 }
