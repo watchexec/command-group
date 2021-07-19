@@ -1,6 +1,6 @@
 use std::{
 	io::Result,
-	process::{Child, ExitStatus, Output, ChildStdin, ChildStdout, ChildStderr},
+	process::{Child, ChildStderr, ChildStdin, ChildStdout, ExitStatus, Output},
 };
 
 pub(super) struct ChildImp {
@@ -9,9 +9,7 @@ pub(super) struct ChildImp {
 
 impl ChildImp {
 	pub fn new(inner: Child) -> Self {
-		Self {
-			inner,
-		}
+		Self { inner }
 	}
 
 	pub(super) fn take_stdin(&mut self) -> Option<ChildStdin> {
@@ -50,7 +48,12 @@ impl ChildImp {
 		todo!()
 	}
 
-	pub(super) fn read_both(mut out_r: ChildStdout, out_v: &mut Vec<u8>, mut err_r: ChildStderr, err_v: &mut Vec<u8>) -> Result<()> {
+	pub(super) fn read_both(
+		mut out_r: ChildStdout,
+		out_v: &mut Vec<u8>,
+		mut err_r: ChildStderr,
+		err_v: &mut Vec<u8>,
+	) -> Result<()> {
 		todo!()
 	}
 }

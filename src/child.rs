@@ -1,7 +1,7 @@
 use std::{
+	fmt,
 	io::{Read, Result},
 	process::{Child, ExitStatus, Output},
-	fmt,
 };
 
 #[cfg(unix)]
@@ -242,22 +242,26 @@ impl GroupChild {
 	pub fn wait_with_output(mut self) -> Result<Output> {
 		drop(self.imp.take_stdin());
 
-        let (mut stdout, mut stderr) = (Vec::new(), Vec::new());
-        match (self.imp.take_stdout(), self.imp.take_stderr()) {
-            (None, None) => {}
-            (Some(mut out), None) => {
-                out.read_to_end(&mut stdout)?;
-            }
-            (None, Some(mut err)) => {
-                err.read_to_end(&mut stderr)?;
-            }
-            (Some(out), Some(err)) => {
-                let res = ChildImp::read_both(out, &mut stdout, err, &mut stderr);
-                res.unwrap();
-            }
-        }
+		let (mut stdout, mut stderr) = (Vec::new(), Vec::new());
+		match (self.imp.take_stdout(), self.imp.take_stderr()) {
+			(None, None) => {}
+			(Some(mut out), None) => {
+				out.read_to_end(&mut stdout)?;
+			}
+			(None, Some(mut err)) => {
+				err.read_to_end(&mut stderr)?;
+			}
+			(Some(out), Some(err)) => {
+				let res = ChildImp::read_both(out, &mut stdout, err, &mut stderr);
+				res.unwrap();
+			}
+		}
 
-        let status = self.imp.wait()?;
-        Ok(Output { status, stdout, stderr })
+		let status = self.imp.wait()?;
+		Ok(Output {
+			status,
+			stdout,
+			stderr,
+		})
 	}
 }

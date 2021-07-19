@@ -1,13 +1,11 @@
 use std::{
+	convert::TryInto,
 	io::{Error, Result},
 	process::Child,
-	convert::TryInto,
 };
 
 use nix::{
-	sys::{
-        signal::{Signal, kill},
-    },
+	sys::signal::{kill, Signal},
 	unistd::Pid,
 };
 

@@ -1,19 +1,22 @@
 use std::{
-	io::{Error, Result, Read},
-	process::{Child, ExitStatus, ChildStdin, ChildStdout, ChildStderr},
 	convert::TryInto,
-	os::unix::{process::ExitStatusExt, io::{RawFd, AsRawFd}},
+	io::{Error, Read, Result},
+	os::unix::{
+		io::{AsRawFd, RawFd},
+		process::ExitStatusExt,
+	},
+	process::{Child, ChildStderr, ChildStdin, ChildStdout, ExitStatus},
 };
 
 use nix::{
-	sys::{
-        signal::{Signal, killpg},
-        wait::WaitPidFlag,
-    },
-	unistd::Pid,
 	errno::Errno,
-	poll::{poll, PollFd, PollFlags},
 	libc,
+	poll::{poll, PollFd, PollFlags},
+	sys::{
+		signal::{killpg, Signal},
+		wait::WaitPidFlag,
+	},
+	unistd::Pid,
 };
 
 pub(super) struct ChildImp {
@@ -67,29 +70,31 @@ impl ChildImp {
 		// we can't use the safe wrapper directly because it doesn't return the raw status, and we
 		// need it to convert to the std's ExitStatus.
 		let mut status: i32 = 0;
-		let res = unsafe {
-			libc::waitpid(
-				negpid.into(),
-				&mut status as *mut libc::c_int,
-				flag.bits(),
-			)
-		};
+		let res =
+			unsafe { libc::waitpid(negpid.into(), &mut status as *mut libc::c_int, flag.bits()) };
 
 		Errno::result(res).map_err(Error::from)
 	}
 
 	pub fn wait(&mut self) -> Result<ExitStatus> {
-		self.wait_imp(WaitPidFlag::empty()).map(ExitStatus::from_raw)
+		self.wait_imp(WaitPidFlag::empty())
+			.map(ExitStatus::from_raw)
 	}
 
 	pub fn try_wait(&mut self) -> Result<Option<ExitStatus>> {
-		self.wait_imp(WaitPidFlag::WNOHANG).map(|status| match status {
-			0 => None,
-			s => Some(ExitStatus::from_raw(s))
-		})
+		self.wait_imp(WaitPidFlag::WNOHANG)
+			.map(|status| match status {
+				0 => None,
+				s => Some(ExitStatus::from_raw(s)),
+			})
 	}
 
-	pub(super) fn read_both(mut out_r: ChildStdout, out_v: &mut Vec<u8>, mut err_r: ChildStderr, err_v: &mut Vec<u8>) -> Result<()> {
+	pub(super) fn read_both(
+		mut out_r: ChildStdout,
+		out_v: &mut Vec<u8>,
+		mut err_r: ChildStderr,
+		err_v: &mut Vec<u8>,
+	) -> Result<()> {
 		let out_fd = out_r.as_raw_fd();
 		let err_fd = err_r.as_raw_fd();
 		set_nonblocking(out_fd, true)?;
@@ -131,9 +136,7 @@ impl ChildImp {
 		#[cfg(target_os = "linux")]
 		fn set_nonblocking(fd: RawFd, nonblocking: bool) -> Result<()> {
 			let v = nonblocking as libc::c_int;
-			let res = unsafe {
-				libc::ioctl(fd, libc::FIONBIO, &v)
-			};
+			let res = unsafe { libc::ioctl(fd, libc::FIONBIO, &v) };
 
 			Errno::result(res).map_err(Error::from).map(drop)
 		}
