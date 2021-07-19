@@ -1,5 +1,5 @@
 use std::{
-	io::Result,
+	io::{Read, Result},
 	mem,
 	process::{Child, ChildStderr, ChildStdin, ChildStdout, ExitStatus},
 };
@@ -93,6 +93,8 @@ impl ChildImp {
 		mut err_r: ChildStderr,
 		err_v: &mut Vec<u8>,
 	) -> Result<()> {
-		todo!()
+		out_r.read_to_end(out_v)?;
+		err_r.read_to_end(err_v)?;
+		Ok(())
 	}
 }

@@ -107,7 +107,7 @@ impl GroupChild {
 	///
 	/// # Examples
 	///
-	/// Writing to input
+	/// Writing to input:
 	///
 	/// ```no_run
 	/// use std::io::Write;
@@ -235,7 +235,15 @@ impl GroupChild {
 	///
 	/// See [the stdlib documentation][Child::wait_with_output] for more.
 	///
+	/// # Bugs
+	///
+	/// On Windows, STDOUT is read before STDERR if both are piped, which may block. This is mostly
+	/// because reading two outputs at the same time in synchronous code is horrendous. If you want
+	/// this, please contribute a better version, otherwise consider using [`AsyncCommandGroup`].
+	///
 	/// # Examples
+	///
+	/// Basic usage:
 	///
 	/// ```should_panic
 	/// use std::process::{Command, Stdio};
@@ -253,7 +261,6 @@ impl GroupChild {
 	///
 	/// assert!(output.status.success());
 	/// ```
-	///
 	pub fn wait_with_output(mut self) -> Result<Output> {
 		drop(self.imp.take_stdin());
 

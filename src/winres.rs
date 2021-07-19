@@ -1,5 +1,8 @@
 use std::io::{Error, Result};
-use winapi::{shared::minwindef::{BOOL, DWORD}, um::winnt::HANDLE};
+use winapi::{
+	shared::minwindef::{BOOL, DWORD},
+	um::winnt::HANDLE,
+};
 
 pub(crate) fn res_null(handle: HANDLE) -> Result<HANDLE> {
 	if handle.is_null() {
