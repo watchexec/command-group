@@ -148,7 +148,9 @@ impl ChildImp {
 			let mut flags = OFlag::from_bits_truncate(fcntl(fd, FcntlArg::F_GETFL)?);
 			flags.set(OFlag::O_NONBLOCK, nonblocking);
 
-			fcntl(fd, FcntlArg::F_SETFL(flags)).map_err(Error::from).map(drop)
+			fcntl(fd, FcntlArg::F_SETFL(flags))
+				.map_err(Error::from)
+				.map(drop)
 		}
 	}
 }

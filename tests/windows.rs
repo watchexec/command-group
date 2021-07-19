@@ -22,7 +22,7 @@ fn inner_read_stdout_normal() -> Result<()> {
 		out.read_to_string(&mut output)?;
 	}
 
-	assert_eq!(output.as_str(), "hello\n");
+	assert_eq!(output.as_str(), "hello\r\n");
 	Ok(())
 }
 
@@ -38,7 +38,7 @@ fn inner_read_stdout_group() -> Result<()> {
 		out.read_to_string(&mut output)?;
 	}
 
-	assert_eq!(output.as_str(), "hello\n");
+	assert_eq!(output.as_str(), "hello\r\n");
 	Ok(())
 }
 
@@ -85,8 +85,7 @@ fn into_inner_write_stdin_group() -> Result<()> {
 
 #[test]
 fn kill_and_try_wait_normal() -> Result<()> {
-	let mut command = Command::new("pause");
-	let mut child = command.spawn()?;
+	let mut child = Command::new("cmd").arg("/C").arg("pause").spawn()?;
 	assert!(child.try_wait()?.is_none());
 	child.kill()?;
 	sleep(Duration::from_millis(50));
@@ -96,8 +95,7 @@ fn kill_and_try_wait_normal() -> Result<()> {
 
 #[test]
 fn kill_and_try_wait_group() -> Result<()> {
-	let mut command = Command::new("pause");
-	let mut child = command.group_spawn()?;
+	let mut child = Command::new("cmd").arg("/C").arg("pause").group_spawn()?;
 	assert!(child.try_wait()?.is_none());
 	child.kill()?;
 	sleep(Duration::from_millis(50));
@@ -130,7 +128,7 @@ fn wait_with_output_normal() -> Result<()> {
 
 	let output = child.wait_with_output()?;
 	assert!(output.status.success());
-	assert_eq!(output.stdout, b"hello\n".to_vec());
+	assert_eq!(output.stdout, b"hello\r\n".to_vec());
 	assert_eq!(output.stderr, Vec::new());
 	Ok(())
 }
@@ -144,7 +142,7 @@ fn wait_with_output_group() -> Result<()> {
 
 	let output = child.wait_with_output()?;
 	assert!(output.status.success());
-	assert_eq!(output.stdout, b"hello\n".to_vec());
+	assert_eq!(output.stdout, b"hello\r\n".to_vec());
 	assert_eq!(output.stderr, Vec::new());
 	Ok(())
 }
