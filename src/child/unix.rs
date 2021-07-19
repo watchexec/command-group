@@ -143,9 +143,12 @@ impl ChildImp {
 
 		#[cfg(not(target_os = "linux"))]
 		fn set_nonblocking(fd: RawFd, nonblocking: bool) -> Result<()> {
-			let mut flags = OFlag::from_bits(fcntl(fd, FcntlArg::GETFL)?);
+			use nix::fcntl::{fcntl, FcntlArg, OFlag};
+
+			let mut flags = OFlag::from_bits_truncate(fcntl(fd, FcntlArg::F_GETFL)?);
 			flags.set(OFlag::O_NONBLOCK, nonblocking);
-			fcntl(fd, FcntlArg::SETFL(flags)).map_err(Error::from)
+
+			fcntl(fd, FcntlArg::F_SETFL(flags)).map_err(Error::from).map(drop)
 		}
 	}
 }
