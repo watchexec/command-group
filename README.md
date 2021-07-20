@@ -32,20 +32,3 @@ let child = Command::new("watch").arg("ls").group_spawn()?;
 let status = child.wait()?;
 dbg!(status);
 ```
-
-## Async
-
-```toml
-[dependencies]
-async-std = { version = "1.9.0", features = ["unstable"] }
-command-group = { version = "1.0.0", features = ["async-std"] }
-```
-
-```rust
-use async_std::process::Command;
-use command_group::AsyncCommandGroup;
-
-let child = Command::new("watch").arg("ls").group_spawn().await?;
-let status = child.wait().await?;
-dbg!(status);
-```
