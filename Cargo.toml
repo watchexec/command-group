@@ -1,11 +1,11 @@
 [package]
 name = "command-group"
-version = "1.0.0"
+version = "0.0.0"
 
 authors = ["Félix Saparelli <felix@passcod.name>"]
 license = "Apache-2.0 OR MIT"
 description = "Extension to Command to spawn in a process group"
-keywords = ["command", "extension", "process", "group", "unix", "windows"]
+keywords = ["command", "extension", "process", "group"]
 
 documentation = "https://github.com/watchexec/command-group"
 homepage = "https://github.com/watchexec/command-group"
