@@ -14,7 +14,7 @@ pub(self) use windows::ChildImp;
 pub use unix_ext::UnixChildExt;
 
 #[cfg(unix)]
-/// Re-export of `Signal` from [nix] for convenience (with [`UnixChildExt`]).
+#[doc(no_inline)]
 pub use nix::sys::signal::Signal;
 
 #[cfg(windows)]
@@ -128,7 +128,7 @@ impl GroupChild {
 	///
 	/// This is equivalent to sending a SIGKILL on Unix platforms.
 	///
-	/// See [the stdlib documentation][Child::kill] for more.
+	/// See [the stdlib documentation](Child::kill) for more.
 	///
 	/// # Examples
 	///
@@ -146,14 +146,14 @@ impl GroupChild {
 	/// }
 	/// ```
 	///
-	/// [`InvalidInput`]: io::ErrorKind::InvalidInput
+	/// [`InvalidInput`]: std::io::ErrorKind::InvalidInput
 	pub fn kill(&mut self) -> Result<()> {
 		self.imp.kill()
 	}
 
 	/// Returns the OS-assigned process group identifier.
 	///
-	/// See [the stdlib documentation][Child::id] for more.
+	/// See [the stdlib documentation](Child::id) for more.
 	///
 	/// # Examples
 	///
@@ -177,7 +177,7 @@ impl GroupChild {
 	/// Waits for the child group to exit completely, returning the status that
 	/// the process leader exited with.
 	///
-	/// See [the stdlib documentation][Child::wait] for more.
+	/// See [the stdlib documentation](Child::wait) for more.
 	///
 	/// # Examples
 	///
@@ -203,7 +203,7 @@ impl GroupChild {
 	/// Attempts to collect the exit status of the child if it has already
 	/// exited.
 	///
-	/// See [the stdlib documentation][Child::try_wait] for more.
+	/// See [the stdlib documentation](Child::try_wait) for more.
 	///
 	/// # Examples
 	///
@@ -233,7 +233,7 @@ impl GroupChild {
 	/// output on the stdout/stderr handles, returning an `Output`
 	/// instance.
 	///
-	/// See [the stdlib documentation][Child::wait_with_output] for more.
+	/// See [the stdlib documentation](Child::wait_with_output) for more.
 	///
 	/// # Bugs
 	///

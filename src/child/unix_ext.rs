@@ -44,7 +44,7 @@ pub trait UnixChildExt {
 	/// }
 	/// ```
 	///
-	/// [`InvalidInput`]: io::ErrorKind::InvalidInput
+	/// [`InvalidInput`]: std::io::ErrorKind::InvalidInput
 	fn signal(&mut self, sig: Signal) -> Result<()>;
 }
 
