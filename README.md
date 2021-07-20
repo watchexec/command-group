@@ -28,7 +28,7 @@ command-group = "1.0.0"
 use std::process::Command;
 use command_group::CommandGroup;
 
-let child = Command::new("watch").arg("ls").group_spawn()?;
+let mut child = Command::new("watch").arg("ls").group_spawn()?;
 let status = child.wait()?;
 dbg!(status);
 ```
