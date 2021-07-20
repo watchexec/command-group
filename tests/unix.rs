@@ -1,6 +1,6 @@
 #![cfg(unix)]
 
-use command_group::CommandGroup;
+use command_group::{CommandGroup, Signal, UnixChildExt};
 use std::{
 	io::{Read, Result, Write},
 	process::{Command, Stdio},
@@ -156,5 +156,25 @@ fn id_same_as_inner_group() -> Result<()> {
 	let mut command = Command::new("echo");
 	let mut child = command.group_spawn()?;
 	assert_eq!(child.id(), child.inner().id());
+	Ok(())
+}
+
+#[test]
+fn signal_normal() -> Result<()> {
+	let mut command = Command::new("yes");
+	let mut child = command.spawn()?;
+	child.signal(Signal::SIGTERM)?;
+	sleep(Duration::from_millis(50));
+	assert!(child.try_wait()?.is_some());
+	Ok(())
+}
+
+#[test]
+fn signal_group() -> Result<()> {
+	let mut command = Command::new("yes");
+	let mut child = command.group_spawn()?;
+	child.signal(Signal::SIGTERM)?;
+	sleep(Duration::from_millis(50));
+	assert!(child.try_wait()?.is_some());
 	Ok(())
 }
