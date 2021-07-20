@@ -35,9 +35,10 @@ impl CommandGroup for Command {
 			CreateIoCompletionPort(INVALID_HANDLE_VALUE, ptr::null_mut(), 0, 1)
 		})?;
 
-		let mut associate_completion = JOBOBJECT_ASSOCIATE_COMPLETION_PORT::default();
-		associate_completion.CompletionKey = job;
-		associate_completion.CompletionPort = completion_port;
+		let mut associate_completion = JOBOBJECT_ASSOCIATE_COMPLETION_PORT {
+			CompletionKey: job,
+			CompletionPort: completion_port,
+		};
 
 		res_bool(unsafe {
 			SetInformationJobObject(
