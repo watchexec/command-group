@@ -12,8 +12,9 @@ use std::{
 
 #[test]
 fn inner_read_stdout_normal() -> Result<()> {
-	let mut child = Command::new("echo")
-		.arg("hello")
+	let mut child = Command::new("powershell.exe")
+		.arg("/C")
+		.arg("echo hello")
 		.stdout(Stdio::piped())
 		.spawn()?;
 
@@ -28,8 +29,9 @@ fn inner_read_stdout_normal() -> Result<()> {
 
 #[test]
 fn inner_read_stdout_group() -> Result<()> {
-	let mut child = Command::new("echo")
-		.arg("hello")
+	let mut child = Command::new("powershell.exe")
+		.arg("/C")
+		.arg("echo hello")
 		.stdout(Stdio::piped())
 		.group_spawn()?;
 
@@ -44,9 +46,8 @@ fn inner_read_stdout_group() -> Result<()> {
 
 #[test]
 fn into_inner_write_stdin_normal() -> Result<()> {
-	let mut child = Command::new("cmd")
-		.arg("/C")
-		.arg("copy con")
+	let mut child = Command::new("findstr")
+		.arg("^")
 		.stdin(Stdio::piped())
 		.stdout(Stdio::piped())
 		.spawn()?;
@@ -60,15 +61,14 @@ fn into_inner_write_stdin_normal() -> Result<()> {
 		out.read_to_string(&mut output)?;
 	}
 
-	assert_eq!(output.as_str(), "hello");
+	assert_eq!(output.as_str(), "hello\r\n");
 	Ok(())
 }
 
 #[test]
 fn into_inner_write_stdin_group() -> Result<()> {
-	let mut child = Command::new("cmd")
-		.arg("/C")
-		.arg("copy con")
+	let mut child = Command::new("findstr")
+		.arg("^")
 		.stdin(Stdio::piped())
 		.stdout(Stdio::piped())
 		.group_spawn()?
@@ -83,13 +83,16 @@ fn into_inner_write_stdin_group() -> Result<()> {
 		out.read_to_string(&mut output)?;
 	}
 
-	assert_eq!(output.as_str(), "hello");
+	assert_eq!(output.as_str(), "hello\r\n");
 	Ok(())
 }
 
 #[test]
 fn kill_and_try_wait_normal() -> Result<()> {
-	let mut child = Command::new("cmd").arg("/C").arg("pause").spawn()?;
+	let mut child = Command::new("powershell.exe")
+		.arg("/C")
+		.arg("pause")
+		.spawn()?;
 	assert!(child.try_wait()?.is_none());
 	child.kill()?;
 	sleep(Duration::from_millis(50));
@@ -99,7 +102,10 @@ fn kill_and_try_wait_normal() -> Result<()> {
 
 #[test]
 fn kill_and_try_wait_group() -> Result<()> {
-	let mut child = Command::new("cmd").arg("/C").arg("pause").group_spawn()?;
+	let mut child = Command::new("powershell.exe")
+		.arg("/C")
+		.arg("pause")
+		.group_spawn()?;
 	assert!(child.try_wait()?.is_none());
 	child.kill()?;
 	sleep(Duration::from_millis(50));
@@ -109,7 +115,10 @@ fn kill_and_try_wait_group() -> Result<()> {
 
 #[test]
 fn wait_normal() -> Result<()> {
-	let mut child = Command::new("echo").arg("hello").spawn()?;
+	let mut child = Command::new("powershell.exe")
+		.arg("/C")
+		.arg("echo hello")
+		.spawn()?;
 	let status = child.wait()?;
 	assert!(status.success());
 	Ok(())
@@ -117,7 +126,10 @@ fn wait_normal() -> Result<()> {
 
 #[test]
 fn wait_group() -> Result<()> {
-	let mut child = Command::new("echo").arg("hello").group_spawn()?;
+	let mut child = Command::new("powershell.exe")
+		.arg("/C")
+		.arg("echo hello")
+		.group_spawn()?;
 	let status = child.wait()?;
 	assert!(status.success());
 	Ok(())
@@ -125,8 +137,9 @@ fn wait_group() -> Result<()> {
 
 #[test]
 fn wait_with_output_normal() -> Result<()> {
-	let child = Command::new("echo")
-		.arg("hello")
+	let child = Command::new("powershell.exe")
+		.arg("/C")
+		.arg("echo hello")
 		.stdout(Stdio::piped())
 		.spawn()?;
 
@@ -139,8 +152,9 @@ fn wait_with_output_normal() -> Result<()> {
 
 #[test]
 fn wait_with_output_group() -> Result<()> {
-	let child = Command::new("echo")
-		.arg("hello")
+	let child = Command::new("powershell.exe")
+		.arg("/C")
+		.arg("echo hello")
 		.stdout(Stdio::piped())
 		.group_spawn()?;
 
@@ -153,8 +167,10 @@ fn wait_with_output_group() -> Result<()> {
 
 #[test]
 fn id_same_as_inner_group() -> Result<()> {
-	let mut command = Command::new("echo");
-	let mut child = command.group_spawn()?;
+	let mut child = Command::new("powershell.exe")
+		.arg("/C")
+		.arg("echo hello")
+		.group_spawn()?;
 	assert_eq!(child.id(), child.inner().id());
 	Ok(())
 }
