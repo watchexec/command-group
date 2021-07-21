@@ -9,6 +9,8 @@ use std::{
 	time::Duration,
 };
 
+const DIE_TIME: Duration = Duration::from_millis(100);
+
 // each test has a _normal variant that uses the stdlib non-group API for comparison/debugging.
 
 #[test]
@@ -89,9 +91,9 @@ fn kill_and_try_wait_normal() -> Result<()> {
 	let mut child = Command::new("yes").stdout(Stdio::null()).spawn()?;
 	assert!(child.try_wait()?.is_none());
 	child.kill()?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_some());
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_some());
 	Ok(())
 }
@@ -101,9 +103,9 @@ fn kill_and_try_wait_group() -> Result<()> {
 	let mut child = Command::new("yes").stdout(Stdio::null()).group_spawn()?;
 	assert!(child.try_wait()?.is_none());
 	child.kill()?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_some());
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_some());
 	Ok(())
 }
@@ -113,9 +115,9 @@ fn try_wait_twice_after_sigterm_normal() -> Result<()> {
 	let mut child = Command::new("yes").stdout(Stdio::null()).spawn()?;
 	assert!(child.try_wait()?.is_none(), "pre try_wait");
 	child.signal(Signal::SIGTERM)?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_some(), "first try_wait");
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_some(), "second try_wait");
 	Ok(())
 }
@@ -125,9 +127,9 @@ fn try_wait_twice_after_sigterm_group() -> Result<()> {
 	let mut child = Command::new("yes").stdout(Stdio::null()).group_spawn()?;
 	assert!(child.try_wait()?.is_none(), "pre try_wait");
 	child.signal(Signal::SIGTERM)?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_some(), "first try_wait");
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_some(), "second try_wait");
 	Ok(())
 }
@@ -175,7 +177,7 @@ fn wait_twice_after_sigterm_group() -> Result<()> {
 #[test]
 fn wait_after_die_normal() -> Result<()> {
 	let mut child = Command::new("echo").stdout(Stdio::null()).spawn()?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 
 	let status = child.wait()?;
 	assert!(status.success());
@@ -186,7 +188,7 @@ fn wait_after_die_normal() -> Result<()> {
 #[test]
 fn wait_after_die_group() -> Result<()> {
 	let mut child = Command::new("echo").stdout(Stdio::null()).group_spawn()?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 
 	let status = child.wait()?;
 	assert!(status.success());
@@ -197,7 +199,7 @@ fn wait_after_die_group() -> Result<()> {
 #[test]
 fn try_wait_after_die_normal() -> Result<()> {
 	let mut child = Command::new("echo").stdout(Stdio::null()).spawn()?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 
 	let status = child.try_wait()?;
 	assert!(status.is_some());
@@ -209,7 +211,7 @@ fn try_wait_after_die_normal() -> Result<()> {
 #[test]
 fn try_wait_after_die_group() -> Result<()> {
 	let mut child = Command::new("echo").stdout(Stdio::null()).group_spawn()?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 
 	let status = child.try_wait()?;
 	assert!(status.is_some());
@@ -281,11 +283,11 @@ fn signal_normal() -> Result<()> {
 	let mut child = Command::new("yes").stdout(Stdio::null()).spawn()?;
 
 	child.signal(Signal::SIGCONT)?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_none(), "not exitted with sigcont");
 
 	child.signal(Signal::SIGTERM)?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_some(), "exitted with sigterm");
 
 	Ok(())
@@ -296,11 +298,11 @@ fn signal_group() -> Result<()> {
 	let mut child = Command::new("yes").stdout(Stdio::null()).group_spawn()?;
 
 	child.signal(Signal::SIGCONT)?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_none(), "not exitted with sigcont");
 
 	child.signal(Signal::SIGTERM)?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_some(), "exitted with sigterm");
 
 	Ok(())

@@ -8,6 +8,8 @@ use std::{
 	time::Duration,
 };
 
+const DIE_TIME: Duration = Duration::from_millis(1000);
+
 // each test has a _normal variant that uses the stdlib non-group API for comparison/debugging.
 
 #[test]
@@ -95,9 +97,9 @@ fn kill_and_try_wait_normal() -> Result<()> {
 		.spawn()?;
 	assert!(child.try_wait()?.is_none());
 	child.kill()?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_some());
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_some());
 	Ok(())
 }
@@ -110,9 +112,9 @@ fn kill_and_try_wait_group() -> Result<()> {
 		.group_spawn()?;
 	assert!(child.try_wait()?.is_none());
 	child.kill()?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_some());
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 	assert!(child.try_wait()?.is_some());
 	Ok(())
 }
@@ -123,7 +125,7 @@ fn wait_after_die_normal() -> Result<()> {
 		.arg("/C")
 		.arg("echo hello")
 		.spawn()?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 
 	let status = child.wait()?;
 	assert!(status.success());
@@ -137,7 +139,7 @@ fn wait_after_die_group() -> Result<()> {
 		.arg("/C")
 		.arg("echo hello")
 		.group_spawn()?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 
 	let status = child.wait()?;
 	assert!(status.success());
@@ -151,7 +153,7 @@ fn try_wait_after_die_normal() -> Result<()> {
 		.arg("/C")
 		.arg("echo hello")
 		.spawn()?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 
 	let status = child.try_wait()?;
 	assert!(status.is_some());
@@ -166,7 +168,7 @@ fn try_wait_after_die_group() -> Result<()> {
 		.arg("/C")
 		.arg("echo hello")
 		.group_spawn()?;
-	sleep(Duration::from_millis(50));
+	sleep(DIE_TIME);
 
 	let status = child.try_wait()?;
 	assert!(status.is_some());
