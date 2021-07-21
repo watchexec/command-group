@@ -118,6 +118,34 @@ fn kill_and_try_wait_group() -> Result<()> {
 }
 
 #[test]
+fn wait_after_die_normal() -> Result<()> {
+	let mut child = Command::new("powershell.exe")
+		.arg("/C")
+		.arg("echo hello")
+		.spawn()?;
+	sleep(Duration::from_millis(50));
+
+	let status = child.wait()?;
+	assert!(status.success());
+
+	Ok(())
+}
+
+#[test]
+fn wait_after_die_group() -> Result<()> {
+	let mut child = Command::new("powershell.exe")
+		.arg("/C")
+		.arg("echo hello")
+		.group_spawn()?;
+	sleep(Duration::from_millis(50));
+
+	let status = child.wait()?;
+	assert!(status.success());
+
+	Ok(())
+}
+
+#[test]
 fn wait_normal() -> Result<()> {
 	let mut child = Command::new("powershell.exe")
 		.arg("/C")

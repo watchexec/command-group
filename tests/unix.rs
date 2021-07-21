@@ -173,6 +173,28 @@ fn wait_twice_after_sigterm_group() -> Result<()> {
 }
 
 #[test]
+fn wait_after_die_normal() -> Result<()> {
+	let mut child = Command::new("echo").stdout(Stdio::null()).spawn()?;
+	sleep(Duration::from_millis(50));
+
+	let status = child.wait()?;
+	assert!(status.success());
+
+	Ok(())
+}
+
+#[test]
+fn wait_after_die_group() -> Result<()> {
+	let mut child = Command::new("echo").stdout(Stdio::null()).group_spawn()?;
+	sleep(Duration::from_millis(50));
+
+	let status = child.wait()?;
+	assert!(status.success());
+
+	Ok(())
+}
+
+#[test]
 fn wait_normal() -> Result<()> {
 	let mut command = Command::new("echo");
 	let mut child = command.spawn()?;
