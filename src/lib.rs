@@ -1,8 +1,9 @@
 //! An extension to [`std::process::Command`] to support process groups on Unix and Windows.
 //!
-//! On Unix, the [`UnixChildExt`] trait additionally adds support for sending signals to processes
-//! and process groups (it’s implemented on _both_ this crate’s [`GroupChild`] and std’s
-//! [`Child`](std::process::Child)).
+#![cfg_attr(unix, doc = "On Unix, the [`UnixChildExt`] trait additionally adds support")]
+#![cfg_attr(unix, doc = "for sending signals to processes and process groups (it’s implemented")]
+#![cfg_attr(unix, doc = "on _both_ this crate’s [`GroupChild`] and std’s")]
+#![cfg_attr(unix, doc = "[`Child`](std::process::Child)).")]
 
 #![doc(html_favicon_url = "https://watchexec.github.io/logo:command-group.svg")]
 #![doc(html_logo_url = "https://watchexec.github.io/logo:command-group.svg")]
