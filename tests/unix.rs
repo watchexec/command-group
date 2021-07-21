@@ -284,11 +284,11 @@ fn signal_normal() -> Result<()> {
 
 	child.signal(Signal::SIGCONT)?;
 	sleep(DIE_TIME);
-	assert!(child.try_wait()?.is_none(), "not exitted with sigcont");
+	assert!(child.try_wait()?.is_none(), "not exited with sigcont");
 
 	child.signal(Signal::SIGTERM)?;
 	sleep(DIE_TIME);
-	assert!(child.try_wait()?.is_some(), "exitted with sigterm");
+	assert!(child.try_wait()?.is_some(), "exited with sigterm");
 
 	Ok(())
 }
@@ -299,11 +299,11 @@ fn signal_group() -> Result<()> {
 
 	child.signal(Signal::SIGCONT)?;
 	sleep(DIE_TIME);
-	assert!(child.try_wait()?.is_none(), "not exitted with sigcont");
+	assert!(child.try_wait()?.is_none(), "not exited with sigcont");
 
 	child.signal(Signal::SIGTERM)?;
 	sleep(DIE_TIME);
-	assert!(child.try_wait()?.is_some(), "exitted with sigterm");
+	assert!(child.try_wait()?.is_some(), "exited with sigterm");
 
 	Ok(())
 }
