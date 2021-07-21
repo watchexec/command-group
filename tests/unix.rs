@@ -195,6 +195,30 @@ fn wait_after_die_group() -> Result<()> {
 }
 
 #[test]
+fn try_wait_after_die_normal() -> Result<()> {
+	let mut child = Command::new("echo").stdout(Stdio::null()).spawn()?;
+	sleep(Duration::from_millis(50));
+
+	let status = child.try_wait()?;
+	assert!(status.is_some());
+	assert!(status.unwrap().success());
+
+	Ok(())
+}
+
+#[test]
+fn try_wait_after_die_group() -> Result<()> {
+	let mut child = Command::new("echo").stdout(Stdio::null()).group_spawn()?;
+	sleep(Duration::from_millis(50));
+
+	let status = child.try_wait()?;
+	assert!(status.is_some());
+	assert!(status.unwrap().success());
+
+	Ok(())
+}
+
+#[test]
 fn wait_normal() -> Result<()> {
 	let mut command = Command::new("echo");
 	let mut child = command.spawn()?;
