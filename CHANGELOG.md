@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+## v1.0.3 (2021-07-21)
+
 Bugfix: `GroupChild::try_wait()` would error if called after a child exited by itself.
 
 ## v1.0.2 (2021-07-21)
