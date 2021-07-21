@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+## v1.0.2 (2021-07-21)
+
 Bugfix: `GroupChild::try_wait()` and `::wait()` could not be called twice.
 
 ## v1.0.1 (2021-07-21)

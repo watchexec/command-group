@@ -21,7 +21,7 @@ _Extension to [`Command`](https://doc.rust-lang.org/std/process/struct.Command.h
 
 ```toml
 [dependencies]
-command-group = "1.0.1"
+command-group = "1.0.2"
 ```
 
 ```rust
