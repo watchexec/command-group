@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+Bugfix: `GroupChild::try_wait()` and `::wait()` could not be called twice.
+
 ## v1.0.1 (2021-07-21)
 
 Implement `Send`+`Sync` on `GroupChild` on Windows, and add a `Drop` implementation to close handles

@@ -50,6 +50,7 @@ mod windows;
 /// ```
 pub struct GroupChild {
 	imp: ChildImp,
+	exitstatus: Option<ExitStatus>,
 }
 
 impl fmt::Debug for GroupChild {
@@ -63,6 +64,7 @@ impl GroupChild {
 	pub(crate) fn new(inner: Child) -> Self {
 		Self {
 			imp: ChildImp::new(inner),
+			exitstatus: None,
 		}
 	}
 
@@ -70,6 +72,7 @@ impl GroupChild {
 	pub(crate) fn new(inner: Child, j: HANDLE, c: HANDLE) -> Self {
 		Self {
 			imp: ChildImp::new(inner, j, c),
+			exitstatus: None,
 		}
 	}
 
@@ -105,7 +108,10 @@ impl GroupChild {
 	/// methods like `wait` and `kill` are implemented. It is not recommended to use this method
 	/// _after_ using any of the other methods on this struct.
 	///
-	#[cfg_attr(windows, doc = "On Windows, this unnavoidably leaves a handle unclosed. Prefer [`inner()`](Self::inner).")]
+	#[cfg_attr(
+		windows,
+		doc = "On Windows, this unnavoidably leaves a handle unclosed. Prefer [`inner()`](Self::inner)."
+	)]
 	///
 	/// # Examples
 	///
@@ -198,8 +204,14 @@ impl GroupChild {
 	/// }
 	/// ```
 	pub fn wait(&mut self) -> Result<ExitStatus> {
+		if let Some(es) = self.exitstatus {
+			return Ok(es);
+		}
+
 		drop(self.imp.take_stdin());
-		self.imp.wait()
+		let status = self.imp.wait()?;
+		self.exitstatus = Some(status);
+		Ok(status)
 	}
 
 	/// Attempts to collect the exit status of the child if it has already
@@ -228,7 +240,17 @@ impl GroupChild {
 	/// }
 	/// ```
 	pub fn try_wait(&mut self) -> Result<Option<ExitStatus>> {
-		self.imp.try_wait()
+		if self.exitstatus.is_some() {
+			return Ok(self.exitstatus);
+		}
+
+		match self.imp.try_wait()? {
+			Some(es) => {
+				self.exitstatus = Some(es);
+				Ok(Some(es))
+			}
+			None => Ok(None),
+		}
 	}
 
 	/// Simultaneously waits for the child to exit and collect all remaining

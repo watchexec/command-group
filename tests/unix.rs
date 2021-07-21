@@ -3,6 +3,7 @@
 use command_group::{CommandGroup, Signal, UnixChildExt};
 use std::{
 	io::{Read, Result, Write},
+	os::unix::process::ExitStatusExt,
 	process::{Command, Stdio},
 	thread::sleep,
 	time::Duration,
@@ -85,10 +86,11 @@ fn into_inner_write_stdin_group() -> Result<()> {
 
 #[test]
 fn kill_and_try_wait_normal() -> Result<()> {
-	let mut command = Command::new("yes");
-	let mut child = command.spawn()?;
+	let mut child = Command::new("yes").stdout(Stdio::null()).spawn()?;
 	assert!(child.try_wait()?.is_none());
 	child.kill()?;
+	sleep(Duration::from_millis(50));
+	assert!(child.try_wait()?.is_some());
 	sleep(Duration::from_millis(50));
 	assert!(child.try_wait()?.is_some());
 	Ok(())
@@ -96,12 +98,77 @@ fn kill_and_try_wait_normal() -> Result<()> {
 
 #[test]
 fn kill_and_try_wait_group() -> Result<()> {
-	let mut command = Command::new("yes");
-	let mut child = command.group_spawn()?;
+	let mut child = Command::new("yes").stdout(Stdio::null()).group_spawn()?;
 	assert!(child.try_wait()?.is_none());
 	child.kill()?;
 	sleep(Duration::from_millis(50));
 	assert!(child.try_wait()?.is_some());
+	sleep(Duration::from_millis(50));
+	assert!(child.try_wait()?.is_some());
+	Ok(())
+}
+
+#[test]
+fn try_wait_twice_after_sigterm_normal() -> Result<()> {
+	let mut child = Command::new("yes").stdout(Stdio::null()).spawn()?;
+	assert!(child.try_wait()?.is_none(), "pre try_wait");
+	child.signal(Signal::SIGTERM)?;
+	sleep(Duration::from_millis(50));
+	assert!(child.try_wait()?.is_some(), "first try_wait");
+	sleep(Duration::from_millis(50));
+	assert!(child.try_wait()?.is_some(), "second try_wait");
+	Ok(())
+}
+
+#[test]
+fn try_wait_twice_after_sigterm_group() -> Result<()> {
+	let mut child = Command::new("yes").stdout(Stdio::null()).group_spawn()?;
+	assert!(child.try_wait()?.is_none(), "pre try_wait");
+	child.signal(Signal::SIGTERM)?;
+	sleep(Duration::from_millis(50));
+	assert!(child.try_wait()?.is_some(), "first try_wait");
+	sleep(Duration::from_millis(50));
+	assert!(child.try_wait()?.is_some(), "second try_wait");
+	Ok(())
+}
+
+#[test]
+fn wait_twice_after_sigterm_normal() -> Result<()> {
+	let mut child = Command::new("yes").stdout(Stdio::null()).spawn()?;
+	assert!(child.try_wait()?.is_none(), "pre try_wait");
+	child.signal(Signal::SIGTERM)?;
+	let status = child.wait()?;
+	assert_eq!(
+		status.signal(),
+		Some(Signal::SIGTERM as i32),
+		"first wait status"
+	);
+	let status = child.wait()?;
+	assert_eq!(
+		status.signal(),
+		Some(Signal::SIGTERM as i32),
+		"second wait status"
+	);
+	Ok(())
+}
+
+#[test]
+fn wait_twice_after_sigterm_group() -> Result<()> {
+	let mut child = Command::new("yes").stdout(Stdio::null()).group_spawn()?;
+	assert!(child.try_wait()?.is_none(), "pre try_wait");
+	child.signal(Signal::SIGTERM)?;
+	let status = child.wait()?;
+	assert_eq!(
+		status.signal(),
+		Some(Signal::SIGTERM as i32),
+		"first wait status"
+	);
+	let status = child.wait()?;
+	assert_eq!(
+		status.signal(),
+		Some(Signal::SIGTERM as i32),
+		"second wait status"
+	);
 	Ok(())
 }
 
@@ -111,6 +178,8 @@ fn wait_normal() -> Result<()> {
 	let mut child = command.spawn()?;
 	let status = child.wait()?;
 	assert!(status.success());
+	let status = child.wait()?;
+	assert!(status.success());
 	Ok(())
 }
 
@@ -118,6 +187,8 @@ fn wait_normal() -> Result<()> {
 fn wait_group() -> Result<()> {
 	let mut command = Command::new("echo");
 	let mut child = command.group_spawn()?;
+	let status = child.wait()?;
+	assert!(status.success());
 	let status = child.wait()?;
 	assert!(status.success());
 	Ok(())
@@ -161,20 +232,30 @@ fn id_same_as_inner_group() -> Result<()> {
 
 #[test]
 fn signal_normal() -> Result<()> {
-	let mut command = Command::new("yes");
-	let mut child = command.spawn()?;
+	let mut child = Command::new("yes").stdout(Stdio::null()).spawn()?;
+
+	child.signal(Signal::SIGCONT)?;
+	sleep(Duration::from_millis(50));
+	assert!(child.try_wait()?.is_none(), "not exitted with sigcont");
+
 	child.signal(Signal::SIGTERM)?;
 	sleep(Duration::from_millis(50));
-	assert!(child.try_wait()?.is_some());
+	assert!(child.try_wait()?.is_some(), "exitted with sigterm");
+
 	Ok(())
 }
 
 #[test]
 fn signal_group() -> Result<()> {
-	let mut command = Command::new("yes");
-	let mut child = command.group_spawn()?;
+	let mut child = Command::new("yes").stdout(Stdio::null()).group_spawn()?;
+
+	child.signal(Signal::SIGCONT)?;
+	sleep(Duration::from_millis(50));
+	assert!(child.try_wait()?.is_none(), "not exitted with sigcont");
+
 	child.signal(Signal::SIGTERM)?;
 	sleep(Duration::from_millis(50));
-	assert!(child.try_wait()?.is_some());
+	assert!(child.try_wait()?.is_some(), "exitted with sigterm");
+
 	Ok(())
 }

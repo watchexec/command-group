@@ -97,6 +97,8 @@ fn kill_and_try_wait_normal() -> Result<()> {
 	child.kill()?;
 	sleep(Duration::from_millis(50));
 	assert!(child.try_wait()?.is_some());
+	sleep(Duration::from_millis(50));
+	assert!(child.try_wait()?.is_some());
 	Ok(())
 }
 
@@ -110,6 +112,8 @@ fn kill_and_try_wait_group() -> Result<()> {
 	child.kill()?;
 	sleep(Duration::from_millis(50));
 	assert!(child.try_wait()?.is_some());
+	sleep(Duration::from_millis(50));
+	assert!(child.try_wait()?.is_some());
 	Ok(())
 }
 
@@ -121,6 +125,8 @@ fn wait_normal() -> Result<()> {
 		.spawn()?;
 	let status = child.wait()?;
 	assert!(status.success());
+	let status = child.wait()?;
+	assert!(status.success());
 	Ok(())
 }
 
@@ -130,6 +136,8 @@ fn wait_group() -> Result<()> {
 		.arg("/C")
 		.arg("echo hello")
 		.group_spawn()?;
+	let status = child.wait()?;
+	assert!(status.success());
 	let status = child.wait()?;
 	assert!(status.success());
 	Ok(())
