@@ -6,6 +6,7 @@ use std::{
 use winapi::{
 	shared::{basetsd::ULONG_PTR, minwindef::DWORD},
 	um::{
+		handleapi::CloseHandle,
 		ioapiset::GetQueuedCompletionStatus,
 		jobapi2::TerminateJobObject,
 		minwinbase::LPOVERLAPPED,
@@ -21,6 +22,16 @@ pub(super) struct ChildImp {
 	job: HANDLE,
 	completion_port: HANDLE,
 }
+
+impl Drop for ChildImp {
+	fn drop(&mut self) {
+		unsafe { CloseHandle(self.job) };
+		unsafe { CloseHandle(self.completion_port) };
+	}
+}
+
+unsafe impl Send for ChildImp {}
+unsafe impl Sync for ChildImp {}
 
 impl ChildImp {
 	pub fn new(inner: Child, job: HANDLE, completion_port: HANDLE) -> Self {
@@ -48,7 +59,17 @@ impl ChildImp {
 	}
 
 	pub fn into_inner(self) -> Child {
-		self.inner
+		let mut its = mem::ManuallyDrop::new(self);
+
+		// manually drop the completion port
+		unsafe { CloseHandle(its.completion_port) };
+
+		// forget about the job -- this leaks a handle, but otherwise the child is useless
+		mem::forget(its.job);
+
+		// extract the Child
+		let fake_inner = unsafe { mem::zeroed() };
+		mem::replace(&mut its.inner, fake_inner)
 	}
 
 	pub fn kill(&mut self) -> Result<()> {

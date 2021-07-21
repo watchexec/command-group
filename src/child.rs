@@ -105,6 +105,8 @@ impl GroupChild {
 	/// methods like `wait` and `kill` are implemented. It is not recommended to use this method
 	/// _after_ using any of the other methods on this struct.
 	///
+	#[cfg_attr(windows, doc = "On Windows, this unnavoidably leaks a handle. Prefer [`inner()`](Self::inner).")]
+	///
 	/// # Examples
 	///
 	/// Writing to input:
