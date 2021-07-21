@@ -63,9 +63,8 @@ impl ChildImp {
 
 		// manually drop the completion port
 		unsafe { CloseHandle(its.completion_port) };
-
-		// forget about the job -- this leaks a handle, but otherwise the child is useless
-		mem::forget(its.job);
+		// we leave the job handle unclosed, otherwise the Child is useless
+		// (as closing it will terminate the job)
 
 		// extract the Child
 		let fake_inner = unsafe { mem::zeroed() };

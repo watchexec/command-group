@@ -2,6 +2,9 @@
 
 ## Next (YYYY-MM-DD)
 
+Implement `Send`+`Sync` on `GroupChild` on Windows, and add a `Drop` implementation to close handles
+too (whoops). Do our best when `.into_inner()` is used...
+
 ## v1.0.0 (2021-07-20)
 
 Initial release
