@@ -1,6 +1,6 @@
 use std::{
 	convert::TryInto,
-	io::{Error, Read, Result},
+	io::{Error, ErrorKind, Read, Result},
 	os::unix::{
 		io::{AsRawFd, RawFd},
 		process::ExitStatusExt,
@@ -64,29 +64,34 @@ impl ChildImp {
 		self.inner.id()
 	}
 
-	fn wait_imp(&mut self, flag: WaitPidFlag) -> Result<i32> {
+	fn wait_imp(&mut self, flag: WaitPidFlag) -> Result<Option<ExitStatus>> {
 		let negpid = Pid::from_raw(-self.pgid.as_raw());
 
 		// we can't use the safe wrapper directly because it doesn't return the raw status, and we
 		// need it to convert to the std's ExitStatus.
 		let mut status: i32 = 0;
-		let res =
-			unsafe { libc::waitpid(negpid.into(), &mut status as *mut libc::c_int, flag.bits()) };
-
-		Errno::result(res).map_err(Error::from).map(|_| status)
+		match unsafe { libc::waitpid(negpid.into(), &mut status as *mut libc::c_int, flag.bits()) }
+		{
+			0 => Ok(None),
+			res => Errno::result(res)
+				.map_err(Error::from)
+				.map(|_| Some(ExitStatus::from_raw(status))),
+		}
 	}
 
 	pub fn wait(&mut self) -> Result<ExitStatus> {
 		self.wait_imp(WaitPidFlag::empty())
-			.map(ExitStatus::from_raw)
+			.transpose()
+			.unwrap_or_else(|| {
+				Err(Error::new(
+					ErrorKind::Other,
+					"blocking waitpid returned pid=0",
+				))
+			})
 	}
 
 	pub fn try_wait(&mut self) -> Result<Option<ExitStatus>> {
 		self.wait_imp(WaitPidFlag::WNOHANG)
-			.map(|status| match status {
-				0 => None,
-				s => Some(ExitStatus::from_raw(s)),
-			})
 	}
 
 	pub(super) fn read_both(
