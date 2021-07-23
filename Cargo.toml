@@ -16,7 +16,8 @@ edition = "2018"
 exclude = ["/bin", "/.github"]
 
 [dependencies]
-tokio = { version = "1.9.0", optional = true }
+async-trait = { version = "0.1.50", optional = true }
+tokio = { version = "1.9.0", features = ["process"], optional = true }
 
 [target.'cfg(unix)'.dependencies.nix]
 version = "0.22.0"
@@ -34,3 +35,8 @@ features = [
 ]
 
 [features]
+default = ["with-tokio"] # TODO: remove for release
+with-tokio = ["async-trait", "tokio"]
+
+[package.metadata.docs.rs]
+all-features = true

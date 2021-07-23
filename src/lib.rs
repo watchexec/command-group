@@ -11,9 +11,16 @@
 mod child;
 pub mod stdlib;
 
+#[cfg(feature = "tokio")]
+pub mod tokio;
+
 #[cfg(windows)]
 pub(crate) mod winres;
 
 #[doc(inline)]
 pub use child::*;
 pub use stdlib::CommandGroup;
+
+#[cfg(feature = "tokio")]
+#[doc(inline)]
+pub use crate::tokio::AsyncCommandGroup;
