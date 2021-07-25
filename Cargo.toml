@@ -35,7 +35,7 @@ features = [
 ]
 
 [features]
-default = ["with-tokio"] # TODO: remove for release
+default = []
 with-tokio = ["async-trait", "tokio"]
 
 [dev-dependencies]
