@@ -1,9 +1,22 @@
 //! An extension to [`std::process::Command`] to support process groups on Unix and Windows.
-//!
+#![cfg_attr(
+	feature = "tokio",
+	doc = "With Tokio, the [`AsyncCommandGroup`] trait extends [`tokio::process::Command`](::tokio::process::Command)."
+)]
+#![doc = "\n"]
 #![cfg_attr(
 	unix,
-	doc = "On Unix, the [`UnixChildExt`] trait additionally adds support for sending signals to processes and process groups (it’s implemented on _both_ this crate’s [`GroupChild`] and std’s [`Child`](std::process::Child))."
+	doc = "On Unix, the [`UnixChildExt`] trait additionally provides"
 )]
+#![cfg_attr(
+	unix,
+	doc = "support for sending signals to processes and process groups (it’s implemented on this crate’s [`GroupChild`],"
+)]
+#![cfg_attr(
+	all(unix, feature = "tokio"),
+	doc = "[`AsyncGroupChild`], Tokio’s [`Child`](::tokio::process::Child)"
+)]
+#![cfg_attr(unix, doc = "and std’s [`Child`](std::process::Child)).")]
 #![doc(html_favicon_url = "https://watchexec.github.io/logo:command-group.svg")]
 #![doc(html_logo_url = "https://watchexec.github.io/logo:command-group.svg")]
 #![warn(missing_docs)]
@@ -32,4 +45,6 @@ pub use crate::stdlib::CommandGroup;
 
 #[cfg(feature = "tokio")]
 #[doc(inline)]
+pub use crate::tokio::child::AsyncGroupChild;
+#[cfg(feature = "tokio")]
 pub use crate::tokio::AsyncCommandGroup;

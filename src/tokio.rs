@@ -1,17 +1,24 @@
 //! Implementation of process group extensions for [Tokio](https://tokio.rs)’s
 //! asynchronous [`Command` type](::tokio::process::Command).
 
-use std::{io::Result, process::{Output, ExitStatus}};
+use std::{
+	io::Result,
+	process::{ExitStatus, Output},
+};
 
-use crate::GroupChild;
+use crate::AsyncGroupChild;
 
 // #[cfg(target_family = "windows")]
 // mod windows;
 
-// #[cfg(target_family = "unix")]
-// mod unix;
+#[cfg(target_family = "unix")]
+mod unix;
+
+pub(crate) mod child;
 
 /// Extensions for [`Command`](::tokio::process::Command) adding support for process groups.
+///
+/// This uses [`async_trait`] for now to provide async methods as a trait.
 #[async_trait::async_trait]
 pub trait AsyncCommandGroup {
 	/// Executes the command as a child process group, returning a handle to it.
@@ -25,15 +32,17 @@ pub trait AsyncCommandGroup {
 	/// Basic usage:
 	///
 	/// ```no_run
+	/// # #[tokio::main]
+	/// # async fn main() {
 	/// use tokio::process::Command;
 	/// use command_group::AsyncCommandGroup;
 	///
 	/// Command::new("ls")
 	///         .group_spawn()
-	///         .await
 	///         .expect("ls command failed to start");
+	/// # }
 	/// ```
-	async fn group_spawn(&mut self) -> Result<GroupChild>;
+	fn group_spawn(&mut self) -> Result<AsyncGroupChild>;
 
 	/// Executes the command as a child process group, waiting for it to finish and
 	/// collecting all of its output.
@@ -48,6 +57,8 @@ pub trait AsyncCommandGroup {
 	/// # Examples
 	///
 	/// ```should_panic
+	/// # #[tokio::main]
+	/// # async fn main() {
 	/// use tokio::process::Command;
 	/// use std::io::{self, Write};
 	/// use command_group::AsyncCommandGroup;
@@ -63,11 +74,11 @@ pub trait AsyncCommandGroup {
 	/// io::stderr().write_all(&output.stderr).unwrap();
 	///
 	/// assert!(output.status.success());
+	/// # }
 	/// ```
 	async fn group_output(&mut self) -> Result<Output> {
-		self.group_spawn()
-			.await
-			.and_then(|child| child.wait_with_output())
+		let child = self.group_spawn()?;
+		child.wait_with_output().await
 	}
 
 	/// Executes a command as a child process group, waiting for it to finish and
@@ -80,6 +91,8 @@ pub trait AsyncCommandGroup {
 	/// # Examples
 	///
 	/// ```should_panic
+	/// # #[tokio::main]
+	/// # async fn main() {
 	/// use tokio::process::Command;
 	/// use command_group::AsyncCommandGroup;
 	///
@@ -92,8 +105,10 @@ pub trait AsyncCommandGroup {
 	/// println!("process finished with: {}", status);
 	///
 	/// assert!(status.success());
+	/// # }
 	/// ```
 	async fn group_status(&mut self) -> Result<ExitStatus> {
-		self.group_spawn().await.and_then(|mut child| child.wait())
+		let mut child = self.group_spawn()?;
+		child.wait().await
 	}
 }
