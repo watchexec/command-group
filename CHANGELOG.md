@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+New: Tokio implementation, gated on the `with-tokio` feature.
+
 ## v1.0.3 (2021-07-21)
 
 Bugfix: `GroupChild::try_wait()` would error if called after a child exited by itself.

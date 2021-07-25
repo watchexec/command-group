@@ -32,3 +32,20 @@ let mut child = Command::new("watch").arg("ls").group_spawn()?;
 let status = child.wait()?;
 dbg!(status);
 ```
+
+### Async: Tokio
+
+```toml
+[dependencies]
+command-group = { version = "1.0.3", features = ["with-tokio"] }
+tokio = { version = "1.9.0", features = ["full"] }
+```
+
+```rust
+use tokio::process::Command;
+use command_group::AsyncCommandGroup;
+
+let mut child = Command::new("watch").arg("ls").group_spawn()?;
+let status = child.wait().await?;
+dbg!(status);
+```
