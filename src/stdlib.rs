@@ -17,6 +17,9 @@ mod unix;
 pub(crate) mod child;
 
 /// Extensions for [`Command`](std::process::Command) adding support for process groups.
+///
+/// At the moment, `kill_on_drop(false)` is not supported on Windows, and may or may not work on
+/// other platforms.
 pub trait CommandGroup {
 	/// Executes the command as a child process group, returning a handle to it.
 	///

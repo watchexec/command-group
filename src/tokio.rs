@@ -19,6 +19,9 @@ pub(crate) mod child;
 /// Extensions for [`Command`](::tokio::process::Command) adding support for process groups.
 ///
 /// This uses [`async_trait`] for now to provide async methods as a trait.
+///
+/// At the moment, `kill_on_drop(false)` is not supported on Windows, and may or may not work on
+/// other platforms.
 #[async_trait::async_trait]
 pub trait AsyncCommandGroup {
 	/// Executes the command as a child process group, returning a handle to it.
