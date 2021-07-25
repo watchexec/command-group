@@ -31,12 +31,15 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: check
+          args: --features with-tokio
       - uses: actions-rs/cargo@v1
         with:
           command: test
+          args: --features with-tokio
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
+          args: --features with-tokio
 
   msrv:
     name: Check on MSRV
@@ -51,3 +54,4 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: check
+          args: --features with-tokio
