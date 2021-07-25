@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+## v1.0.4 (2021-07-26)
+
 New: Tokio implementation, gated on the `with-tokio` feature.
 
 ## v1.0.3 (2021-07-21)
