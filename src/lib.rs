@@ -11,15 +11,21 @@
 mod child;
 pub mod stdlib;
 
+#[cfg(unix)]
+mod unix_ext;
+
 #[cfg(feature = "tokio")]
 pub mod tokio;
 
 #[cfg(windows)]
 pub(crate) mod winres;
 
+#[cfg(unix)]
 #[doc(inline)]
-pub use child::*;
-pub use stdlib::CommandGroup;
+pub use crate::unix_ext::UnixChildExt;
+#[cfg(unix)]
+#[doc(no_inline)]
+pub use nix::sys::signal::Signal;
 
 #[cfg(feature = "tokio")]
 #[doc(inline)]
