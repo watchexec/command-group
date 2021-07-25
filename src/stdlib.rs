@@ -1,5 +1,5 @@
 //! Implementation of process group extensions for the
-//! [standard library `Command` type](std::process::Command).
+//! standard library’s [`Command` type](std::process::Command).
 
 use std::{
 	io::Result,
@@ -13,6 +13,8 @@ mod windows;
 
 #[cfg(target_family = "unix")]
 mod unix;
+
+pub(crate) mod child;
 
 /// Extensions for [`Command`](std::process::Command) adding support for process groups.
 pub trait CommandGroup {

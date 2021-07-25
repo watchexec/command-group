@@ -8,7 +8,6 @@
 #![doc(html_logo_url = "https://watchexec.github.io/logo:command-group.svg")]
 #![warn(missing_docs)]
 
-mod child;
 pub mod stdlib;
 
 #[cfg(unix)]
@@ -26,6 +25,10 @@ pub use crate::unix_ext::UnixChildExt;
 #[cfg(unix)]
 #[doc(no_inline)]
 pub use nix::sys::signal::Signal;
+
+#[doc(inline)]
+pub use crate::stdlib::child::GroupChild;
+pub use crate::stdlib::CommandGroup;
 
 #[cfg(feature = "tokio")]
 #[doc(inline)]

@@ -10,20 +10,16 @@ pub(self) use unix::ChildImp;
 pub(self) use windows::ChildImp;
 
 #[cfg(unix)]
-#[doc(inline)]
-pub use unix_ext::UnixChildExt;
+use crate::UnixChildExt;
 
 #[cfg(unix)]
-#[doc(no_inline)]
-pub use nix::sys::signal::Signal;
+use nix::sys::signal::Signal;
 
 #[cfg(windows)]
 use winapi::um::winnt::HANDLE;
 
 #[cfg(unix)]
 mod unix;
-#[cfg(unix)]
-mod unix_ext;
 #[cfg(windows)]
 mod windows;
 
@@ -309,5 +305,11 @@ impl GroupChild {
 			stdout,
 			stderr,
 		})
+	}
+}
+
+impl UnixChildExt for GroupChild {
+	fn signal(&mut self, sig: Signal) -> Result<()> {
+		self.imp.signal_imp(sig)
 	}
 }
