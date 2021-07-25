@@ -1,14 +1,13 @@
 use std::{io::Result, mem, process::ExitStatus};
-use tokio::{process::{Child, ChildStderr, ChildStdin, ChildStdout}, task::spawn_blocking};
+use tokio::{
+	process::{Child, ChildStderr, ChildStdin, ChildStdout},
+	task::spawn_blocking,
+};
 use winapi::{
 	shared::{basetsd::ULONG_PTR, minwindef::DWORD},
 	um::{
-		handleapi::CloseHandle,
-		ioapiset::GetQueuedCompletionStatus,
-		jobapi2::TerminateJobObject,
-		minwinbase::LPOVERLAPPED,
-		winbase::INFINITE,
-		winnt::HANDLE,
+		handleapi::CloseHandle, ioapiset::GetQueuedCompletionStatus, jobapi2::TerminateJobObject,
+		minwinbase::LPOVERLAPPED, winbase::INFINITE, winnt::HANDLE,
 	},
 };
 
