@@ -17,7 +17,7 @@ exclude = ["/bin", "/.github"]
 
 [dependencies]
 async-trait = { version = "0.1.50", optional = true }
-tokio = { version = "1.9.0", features = ["macros", "process", "rt"], optional = true }
+tokio = { version = "1.9.0", features = ["macros", "process", "rt", "sync"], optional = true }
 
 [target.'cfg(unix)'.dependencies.nix]
 version = "0.22.0"

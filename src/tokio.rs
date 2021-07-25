@@ -8,8 +8,8 @@ use std::{
 
 use crate::AsyncGroupChild;
 
-// #[cfg(target_family = "windows")]
-// mod windows;
+#[cfg(target_family = "windows")]
+mod windows;
 
 #[cfg(target_family = "unix")]
 mod unix;

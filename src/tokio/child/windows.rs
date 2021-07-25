@@ -1,8 +1,5 @@
-use std::{
-	io::{Read, Result},
-	mem,
-	process::{Child, ChildStderr, ChildStdin, ChildStdout, ExitStatus},
-};
+use std::{io::Result, mem, process::ExitStatus};
+use tokio::{process::{Child, ChildStderr, ChildStdin, ChildStdout}, task::spawn_blocking};
 use winapi::{
 	shared::{basetsd::ULONG_PTR, minwindef::DWORD},
 	um::{
@@ -11,7 +8,7 @@ use winapi::{
 		jobapi2::TerminateJobObject,
 		minwinbase::LPOVERLAPPED,
 		winbase::INFINITE,
-		winnt::{HANDLE, JOB_OBJECT_MSG_ACTIVE_PROCESS_ZERO},
+		winnt::HANDLE,
 	},
 };
 
@@ -19,26 +16,33 @@ use crate::winres::*;
 
 pub(super) struct ChildImp {
 	inner: Child,
+	handles: JobPort,
+}
+
+#[derive(Clone)]
+struct JobPort {
 	job: HANDLE,
 	completion_port: HANDLE,
 }
 
-impl Drop for ChildImp {
+impl Drop for JobPort {
 	fn drop(&mut self) {
 		unsafe { CloseHandle(self.job) };
 		unsafe { CloseHandle(self.completion_port) };
 	}
 }
 
-unsafe impl Send for ChildImp {}
-unsafe impl Sync for ChildImp {}
+unsafe impl Send for JobPort {}
+unsafe impl Sync for JobPort {}
 
 impl ChildImp {
 	pub fn new(inner: Child, job: HANDLE, completion_port: HANDLE) -> Self {
 		Self {
 			inner,
-			job,
-			completion_port,
+			handles: JobPort {
+				job,
+				completion_port,
+			},
 		}
 	}
 
@@ -59,34 +63,32 @@ impl ChildImp {
 	}
 
 	pub fn into_inner(self) -> Child {
-		let mut its = mem::ManuallyDrop::new(self);
+		let its = mem::ManuallyDrop::new(self.handles);
 
 		// manually drop the completion port
 		unsafe { CloseHandle(its.completion_port) };
 		// we leave the job handle unclosed, otherwise the Child is useless
 		// (as closing it will terminate the job)
 
-		// extract the Child
-		let fake_inner = unsafe { mem::zeroed() };
-		mem::replace(&mut its.inner, fake_inner)
+		self.inner
 	}
 
 	pub fn kill(&mut self) -> Result<()> {
-		res_bool(unsafe { TerminateJobObject(self.job, 1) })
+		res_bool(unsafe { TerminateJobObject(self.handles.job, 1) })
 	}
 
-	pub fn id(&self) -> u32 {
+	pub fn id(&self) -> Option<u32> {
 		self.inner.id()
 	}
 
-	fn wait_imp(&self, timeout: DWORD) -> Result<bool> {
+	fn wait_imp(handles: JobPort, timeout: DWORD) -> Result<()> {
 		let mut code: DWORD = 0;
 		let mut key: ULONG_PTR = 0;
 		let mut overlapped = mem::MaybeUninit::<LPOVERLAPPED>::uninit();
 
 		res_bool(unsafe {
 			GetQueuedCompletionStatus(
-				self.completion_port,
+				handles.completion_port,
 				&mut code,
 				&mut key,
 				overlapped.as_mut_ptr(),
@@ -94,27 +96,20 @@ impl ChildImp {
 			)
 		})?;
 
-		Ok(code == JOB_OBJECT_MSG_ACTIVE_PROCESS_ZERO && (key as HANDLE) == self.job)
+		// don't drop them
+		mem::forget(handles);
+
+		Ok(())
 	}
 
-	pub fn wait(&mut self) -> Result<ExitStatus> {
-		self.wait_imp(INFINITE)?;
-		self.inner.wait()
+	pub async fn wait(&mut self) -> Result<ExitStatus> {
+		let handles = self.handles.clone();
+		spawn_blocking(|| Self::wait_imp(handles, INFINITE)).await??;
+		self.inner.wait().await
 	}
 
 	pub fn try_wait(&mut self) -> Result<Option<ExitStatus>> {
-		self.wait_imp(0)?;
+		Self::wait_imp(self.handles.clone(), 0)?;
 		self.inner.try_wait()
-	}
-
-	pub(super) fn read_both(
-		mut out_r: ChildStdout,
-		out_v: &mut Vec<u8>,
-		mut err_r: ChildStderr,
-		err_v: &mut Vec<u8>,
-	) -> Result<()> {
-		out_r.read_to_end(out_v)?;
-		err_r.read_to_end(err_v)?;
-		Ok(())
 	}
 }
