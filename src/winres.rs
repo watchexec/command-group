@@ -23,6 +23,22 @@ use winapi::{
 	},
 };
 
+#[derive(Clone)]
+pub(crate) struct JobPort {
+	pub job: HANDLE,
+	pub completion_port: HANDLE,
+}
+
+impl Drop for JobPort {
+	fn drop(&mut self) {
+		unsafe { CloseHandle(self.job) };
+		unsafe { CloseHandle(self.completion_port) };
+	}
+}
+
+unsafe impl Send for JobPort {}
+unsafe impl Sync for JobPort {}
+
 pub(crate) fn res_null(handle: HANDLE) -> Result<HANDLE> {
 	if handle.is_null() {
 		Err(Error::last_os_error())

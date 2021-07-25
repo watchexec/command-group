@@ -18,22 +18,6 @@ pub(super) struct ChildImp {
 	handles: JobPort,
 }
 
-#[derive(Clone)]
-struct JobPort {
-	job: HANDLE,
-	completion_port: HANDLE,
-}
-
-impl Drop for JobPort {
-	fn drop(&mut self) {
-		unsafe { CloseHandle(self.job) };
-		unsafe { CloseHandle(self.completion_port) };
-	}
-}
-
-unsafe impl Send for JobPort {}
-unsafe impl Sync for JobPort {}
-
 impl ChildImp {
 	pub fn new(inner: Child, job: HANDLE, completion_port: HANDLE) -> Self {
 		Self {

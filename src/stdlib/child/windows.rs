@@ -6,12 +6,8 @@ use std::{
 use winapi::{
 	shared::{basetsd::ULONG_PTR, minwindef::DWORD},
 	um::{
-		handleapi::CloseHandle,
-		ioapiset::GetQueuedCompletionStatus,
-		jobapi2::TerminateJobObject,
-		minwinbase::LPOVERLAPPED,
-		winbase::INFINITE,
-		winnt::{HANDLE, JOB_OBJECT_MSG_ACTIVE_PROCESS_ZERO},
+		handleapi::CloseHandle, ioapiset::GetQueuedCompletionStatus, jobapi2::TerminateJobObject,
+		minwinbase::LPOVERLAPPED, winbase::INFINITE, winnt::HANDLE,
 	},
 };
 
@@ -19,26 +15,17 @@ use crate::winres::*;
 
 pub(super) struct ChildImp {
 	inner: Child,
-	job: HANDLE,
-	completion_port: HANDLE,
+	handles: JobPort,
 }
-
-impl Drop for ChildImp {
-	fn drop(&mut self) {
-		unsafe { CloseHandle(self.job) };
-		unsafe { CloseHandle(self.completion_port) };
-	}
-}
-
-unsafe impl Send for ChildImp {}
-unsafe impl Sync for ChildImp {}
 
 impl ChildImp {
 	pub fn new(inner: Child, job: HANDLE, completion_port: HANDLE) -> Self {
 		Self {
 			inner,
-			job,
-			completion_port,
+			handles: JobPort {
+				job,
+				completion_port,
+			},
 		}
 	}
 
@@ -59,34 +46,32 @@ impl ChildImp {
 	}
 
 	pub fn into_inner(self) -> Child {
-		let mut its = mem::ManuallyDrop::new(self);
-
 		// manually drop the completion port
+		let its = mem::ManuallyDrop::new(self.handles);
 		unsafe { CloseHandle(its.completion_port) };
 		// we leave the job handle unclosed, otherwise the Child is useless
 		// (as closing it will terminate the job)
 
 		// extract the Child
-		let fake_inner = unsafe { mem::zeroed() };
-		mem::replace(&mut its.inner, fake_inner)
+		self.inner
 	}
 
 	pub fn kill(&mut self) -> Result<()> {
-		res_bool(unsafe { TerminateJobObject(self.job, 1) })
+		res_bool(unsafe { TerminateJobObject(self.handles.job, 1) })
 	}
 
 	pub fn id(&self) -> u32 {
 		self.inner.id()
 	}
 
-	fn wait_imp(&self, timeout: DWORD) -> Result<bool> {
+	fn wait_imp(&self, timeout: DWORD) -> Result<()> {
 		let mut code: DWORD = 0;
 		let mut key: ULONG_PTR = 0;
 		let mut overlapped = mem::MaybeUninit::<LPOVERLAPPED>::uninit();
 
 		res_bool(unsafe {
 			GetQueuedCompletionStatus(
-				self.completion_port,
+				self.handles.completion_port,
 				&mut code,
 				&mut key,
 				overlapped.as_mut_ptr(),
@@ -94,7 +79,7 @@ impl ChildImp {
 			)
 		})?;
 
-		Ok(code == JOB_OBJECT_MSG_ACTIVE_PROCESS_ZERO && (key as HANDLE) == self.job)
+		Ok(())
 	}
 
 	pub fn wait(&mut self) -> Result<ExitStatus> {
