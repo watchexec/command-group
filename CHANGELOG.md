@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+Internal: change usage of `feature = "tokio"` to `feature = "with-tokio"`.
+
 ## v1.0.4 (2021-07-26)
 
 New: Tokio implementation, gated on the `with-tokio` feature.

@@ -55,7 +55,7 @@ impl UnixChildExt for Child {
 	}
 }
 
-#[cfg(feature = "tokio")]
+#[cfg(feature = "with-tokio")]
 impl UnixChildExt for ::tokio::process::Child {
 	fn signal(&mut self, sig: Signal) -> Result<()> {
 		if let Some(id) = self.id() {

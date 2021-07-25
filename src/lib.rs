@@ -1,6 +1,6 @@
 //! An extension to [`std::process::Command`] to support process groups on Unix and Windows.
 #![cfg_attr(
-	feature = "tokio",
+	feature = "with-tokio",
 	doc = "With Tokio, the [`AsyncCommandGroup`] trait extends [`tokio::process::Command`](::tokio::process::Command)."
 )]
 #![doc = "\n"]
@@ -13,7 +13,7 @@
 	doc = "support for sending signals to processes and process groups (it’s implemented on this crate’s [`GroupChild`],"
 )]
 #![cfg_attr(
-	all(unix, feature = "tokio"),
+	all(unix, feature = "with-tokio"),
 	doc = "[`AsyncGroupChild`], Tokio’s [`Child`](::tokio::process::Child)"
 )]
 #![cfg_attr(unix, doc = "and std’s [`Child`](std::process::Child)).")]
@@ -26,7 +26,7 @@ pub mod stdlib;
 #[cfg(unix)]
 mod unix_ext;
 
-#[cfg(feature = "tokio")]
+#[cfg(feature = "with-tokio")]
 pub mod tokio;
 
 #[cfg(windows)]
@@ -43,8 +43,8 @@ pub use nix::sys::signal::Signal;
 pub use crate::stdlib::child::GroupChild;
 pub use crate::stdlib::CommandGroup;
 
-#[cfg(feature = "tokio")]
+#[cfg(feature = "with-tokio")]
 #[doc(inline)]
 pub use crate::tokio::child::AsyncGroupChild;
-#[cfg(feature = "tokio")]
+#[cfg(feature = "with-tokio")]
 pub use crate::tokio::AsyncCommandGroup;

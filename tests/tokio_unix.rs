@@ -1,4 +1,4 @@
-#![cfg(all(unix, feature = "tokio"))]
+#![cfg(all(unix, feature = "with-tokio"))]
 
 use command_group::{AsyncCommandGroup, Signal, UnixChildExt};
 use std::{io::Result, os::unix::process::ExitStatusExt, process::Stdio, time::Duration};

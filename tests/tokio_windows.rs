@@ -1,4 +1,4 @@
-#![cfg(all(windows, feature = "tokio"))]
+#![cfg(all(windows, feature = "with-tokio"))]
 
 use command_group::AsyncCommandGroup;
 use std::{io::Result, process::Stdio, time::Duration};
