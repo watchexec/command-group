@@ -7,7 +7,7 @@ license = "Apache-2.0 OR MIT"
 description = "Extension to Command to spawn in a process group"
 keywords = ["command", "extension", "process", "group"]
 
-documentation = "https://github.com/watchexec/command-group"
+documentation = "https://docs.rs/command-group"
 homepage = "https://github.com/watchexec/command-group"
 repository = "https://github.com/watchexec/command-group"
 readme = "README.md"
