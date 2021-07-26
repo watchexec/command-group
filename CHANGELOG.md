@@ -2,7 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
-Internal: change usage of `feature = "tokio"` to `feature = "with-tokio"`.
+- Internal: change usage of `feature = "tokio"` to `feature = "with-tokio"`.
+- Documentation: remove wrong mention of blocking reads on `AsyncGroupChild::wait_with_output()`.
 
 ## v1.0.4 (2021-07-26)
 

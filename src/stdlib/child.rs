@@ -259,7 +259,7 @@ impl GroupChild {
 	///
 	/// On Windows, STDOUT is read before STDERR if both are piped, which may block. This is mostly
 	/// because reading two outputs at the same time in synchronous code is horrendous. If you want
-	/// this, please contribute a better version.
+	/// this, please contribute a better version. Alternatively, prefer using the async API.
 	///
 	/// # Examples
 	///
