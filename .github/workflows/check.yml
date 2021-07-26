@@ -28,18 +28,26 @@ jobs:
           toolchain: stable
           override: true
       - run: rustup component add clippy
-      - uses: actions-rs/cargo@v1
+      - name: Check
+        uses: actions-rs/cargo@v1
         with:
           command: check
           args: --features with-tokio
-      - uses: actions-rs/cargo@v1
+      - name: Test
+        uses: actions-rs/cargo@v1
         with:
           command: test
           args: --features with-tokio
-      - uses: actions-rs/cargo@v1
+      - name: Clippy
+        uses: actions-rs/cargo@v1
         with:
           command: clippy
           args: --features with-tokio
+      - name: Release test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --release --features with-tokio
 
   msrv:
     name: Check on MSRV
