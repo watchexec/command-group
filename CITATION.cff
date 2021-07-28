@@ -1,0 +1,16 @@
+# YAML 1.2
+---
+cff-version: "1.1.0"
+message: If you use this software, please cite it using these metadata.
+
+title: Command Group
+version: 1.0.4
+date-released: 2021-07-26
+
+repository-code: https://github.com/watchexec/command-group
+license: Apache-2.0 OR MIT
+
+authors:
+  - family-names: Saparelli
+    given-names: Félix
+...
