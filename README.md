@@ -21,7 +21,7 @@ _Extension to [`Command`](https://doc.rust-lang.org/std/process/struct.Command.h
 
 ```toml
 [dependencies]
-command-group = "1.0.4"
+command-group = "1.0.5"
 ```
 
 ```rust
@@ -37,7 +37,7 @@ dbg!(status);
 
 ```toml
 [dependencies]
-command-group = { version = "1.0.4", features = ["with-tokio"] }
+command-group = { version = "1.0.5", features = ["with-tokio"] }
 tokio = { version = "1.10.0", features = ["full"] }
 ```
 
