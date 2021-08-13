@@ -38,7 +38,7 @@ dbg!(status);
 ```toml
 [dependencies]
 command-group = { version = "1.0.4", features = ["with-tokio"] }
-tokio = { version = "1.9.0", features = ["full"] }
+tokio = { version = "1.10.0", features = ["full"] }
 ```
 
 ```rust

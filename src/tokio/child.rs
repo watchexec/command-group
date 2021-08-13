@@ -324,6 +324,8 @@ impl AsyncGroupChild {
 				err.read_to_end(&mut stderr).await?;
 			}
 			(Some(mut out), Some(mut err)) => {
+				// TODO: replace with futures crate usage
+				// and drop macros feature from tokio
 				tokio::try_join!(out.read_to_end(&mut stdout), err.read_to_end(&mut stderr),)?;
 			}
 		}
