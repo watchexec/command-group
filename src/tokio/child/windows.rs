@@ -84,7 +84,7 @@ impl ChildImp {
 
 		// ignore timing out errors unless the timeout was specified to INFINITE
 		// https://docs.microsoft.com/en-us/windows/win32/api/ioapiset/nf-ioapiset-getqueuedcompletionstatus
-		if timeout != INFINITE && result == FALSE && overlapped.is_null() {
+		if timeout != INFINITE && result == FALSE && overlapped.as_ptr().is_null() {
 			return Ok(());
 		}
 
