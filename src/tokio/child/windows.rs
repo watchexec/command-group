@@ -4,7 +4,10 @@ use tokio::{
 	task::spawn_blocking,
 };
 use winapi::{
-	shared::{basetsd::ULONG_PTR, minwindef::DWORD},
+	shared::{
+		basetsd::ULONG_PTR,
+		minwindef::{DWORD, FALSE},
+	},
 	um::{
 		handleapi::CloseHandle, ioapiset::GetQueuedCompletionStatus, jobapi2::TerminateJobObject,
 		minwinbase::LPOVERLAPPED, winbase::INFINITE, winnt::HANDLE,
