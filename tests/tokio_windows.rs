@@ -153,7 +153,7 @@ async fn try_wait_after_die_normal() -> Result<()> {
 		.arg("/C")
 		.arg("echo hello")
 		.spawn()?;
-	sleep(DIE_TIME).await;
+	sleep(DIE_TIME * 10).await;
 
 	let status = child.try_wait()?;
 	assert!(status.is_some());
@@ -168,7 +168,7 @@ async fn try_wait_after_die_group() -> Result<()> {
 		.arg("/C")
 		.arg("echo hello")
 		.group_spawn()?;
-	sleep(DIE_TIME).await;
+	sleep(DIE_TIME * 10).await;
 
 	let status = child.try_wait()?;
 	assert!(status.is_some());
