@@ -11,7 +11,12 @@ impl AsyncCommandGroup for Command {
 		self.creation_flags(CREATE_SUSPENDED);
 
 		let child = self.spawn()?;
-		assign_child(child.raw_handle().expect("child has exited but it has not even started"), job)?;
+		assign_child(
+			child
+				.raw_handle()
+				.expect("child has exited but it has not even started"),
+			job,
+		)?;
 
 		Ok(AsyncGroupChild::new(child, job, completion_port))
 	}

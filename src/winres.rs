@@ -6,7 +6,7 @@ use std::{
 	ptr,
 };
 use winapi::{
-	shared::minwindef::{BOOL, DWORD, LPVOID},
+	shared::minwindef::{BOOL, DWORD, FALSE, LPVOID},
 	um::{
 		handleapi::{CloseHandle, INVALID_HANDLE_VALUE},
 		ioapiset::CreateIoCompletionPort,
@@ -48,7 +48,7 @@ pub(crate) fn res_null(handle: HANDLE) -> Result<HANDLE> {
 }
 
 pub(crate) fn res_bool(ret: BOOL) -> Result<()> {
-	if ret == 0 {
+	if ret == FALSE {
 		Err(Error::last_os_error())
 	} else {
 		Ok(())

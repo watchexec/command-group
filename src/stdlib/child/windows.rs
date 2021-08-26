@@ -4,7 +4,10 @@ use std::{
 	process::{Child, ChildStderr, ChildStdin, ChildStdout, ExitStatus},
 };
 use winapi::{
-	shared::{basetsd::ULONG_PTR, minwindef::DWORD},
+	shared::{
+		basetsd::ULONG_PTR,
+		minwindef::{DWORD, FALSE},
+	},
 	um::{
 		handleapi::CloseHandle, ioapiset::GetQueuedCompletionStatus, jobapi2::TerminateJobObject,
 		minwinbase::LPOVERLAPPED, winbase::INFINITE, winnt::HANDLE,
@@ -69,7 +72,7 @@ impl ChildImp {
 		let mut key: ULONG_PTR = 0;
 		let mut overlapped = mem::MaybeUninit::<LPOVERLAPPED>::uninit();
 
-		res_bool(unsafe {
+		let result = unsafe {
 			GetQueuedCompletionStatus(
 				self.handles.completion_port,
 				&mut code,
@@ -77,7 +80,15 @@ impl ChildImp {
 				overlapped.as_mut_ptr(),
 				timeout,
 			)
-		})?;
+		};
+
+		// ignore timing out errors unless the timeout was specified to INFINITE
+		// https://docs.microsoft.com/en-us/windows/win32/api/ioapiset/nf-ioapiset-getqueuedcompletionstatus
+		if timeout != INFINITE && result == FALSE && overlapped.as_ptr().is_null() {
+			return Ok(());
+		}
+
+		res_bool(result)?;
 
 		Ok(())
 	}
