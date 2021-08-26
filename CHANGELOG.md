@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+- Correctly handle timeouts on Windows. ([#2](https://github.com/watchexec/command-group/issues/2), [#3](https://github.com/watchexec/command-group/pull/3))
+
 ## v1.0.5 (2021-08-13)
 
 - Internal: change usage of `feature = "tokio"` to `feature = "with-tokio"`.
