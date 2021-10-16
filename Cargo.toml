@@ -20,7 +20,7 @@ async-trait = { version = "0.1.50", optional = true }
 
 [dependencies.tokio]
 version = "1.10.0"
-features = ["macros", "process", "rt"]
+features = ["io-std", "macros", "process", "rt"]
 optional = true
 
 [target.'cfg(unix)'.dependencies.nix]

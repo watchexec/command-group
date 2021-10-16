@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+- Bugfix: compiling would fail with Tokio 1.12 due to missing `io-std` feature.
+
 ## v1.0.6 (2021-08-26)
 
 - Correctly handle timeouts on Windows. ([#2](https://github.com/watchexec/command-group/issues/2), [#3](https://github.com/watchexec/command-group/pull/3))
