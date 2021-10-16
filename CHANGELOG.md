@@ -2,9 +2,11 @@
 
 ## Next (YYYY-MM-DD)
 
-## v1.0.7 (2021-10-16)
+- Bugfix: compiling would fail when Tokio was missing the `io-util` feature (not `io-std`).
 
-- Bugfix: compiling would fail with Tokio 1.12 due to missing `io-std` feature.
+## v1.0.7 (2021-10-16) (yanked)
+
+- Bugfix: compiling would fail when Tokio was missing the `io-std` feature.
 
 ## v1.0.6 (2021-08-26)
 
