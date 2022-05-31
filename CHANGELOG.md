@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+- Add BORS.
+
 ## v1.0.8 (2021-10-16)
 
 - Bugfix: compiling would fail when Tokio was missing the `io-util` feature (not `io-std`).

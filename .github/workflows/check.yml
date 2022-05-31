@@ -1,23 +1,17 @@
+name: PR feedback
 on:
   pull_request:
-  push:
-    branches:
-      - main
-      - try/**
-
-name: Checks & Tests
 
 jobs:
-  check:
+  clippy:
     strategy:
-      fail-fast: false
       matrix:
-        platform:
-          - ubuntu
-          - windows
-          - macos
+        include:
+          - platform: macos
+          - platform: ubuntu
+          - platform: windows
 
-    name: Test on ${{ matrix.platform }}
+    name: "Clippy on ${{ matrix.platform }}"
     runs-on: "${{ matrix.platform }}-latest"
 
     steps:
@@ -26,40 +20,26 @@ jobs:
         with:
           profile: minimal
           toolchain: stable
-          override: true
+          default: true
+
       - run: rustup component add clippy
-      - name: Check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
-          args: --features with-tokio
-      - name: Test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --features with-tokio
-      - name: Clippy
-        uses: actions-rs/cargo@v1
+      - uses: actions-rs/cargo@v1
         with:
           command: clippy
           args: --features with-tokio
-      - name: Release test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --release --features with-tokio
 
-  msrv:
-    name: Check on MSRV
+  fmt-check:
+    name: Check formatting
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: 1.51.0
+          toolchain: stable
           override: true
       - uses: actions-rs/cargo@v1
         with:
-          command: check
-          args: --features with-tokio
+          command: fmt
+          args: --check
