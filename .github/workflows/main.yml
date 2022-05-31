@@ -1,0 +1,38 @@
+name: Main branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check:
+    strategy:
+      matrix:
+        include:
+          - platform: macos
+            features: default
+          - platform: macos
+            features: with-tokio
+          - platform: ubuntu
+            features: default
+          - platform: ubuntu
+            features: with-tokio
+          - platform: windows
+            features: default
+          - platform: windows
+            features: with-tokio
+
+    name: "Check on ${{ matrix.platform }} (feat: ${{ matrix.features }})"
+    runs-on: "${{ matrix.platform }}-latest"
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          default: true
+      - uses: actions-rs/cargo@v1
+        with:
+          command: check
+          args: --features ${{ matrix.features }}

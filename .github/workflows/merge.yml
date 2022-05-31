@@ -1,0 +1,64 @@
+name: Merge (with Bors)
+on:
+  push:
+    branches:
+      - staging
+      - trying
+
+jobs:
+  check:
+    strategy:
+      matrix:
+        include:
+          - platform: macos
+            toolchain: stable
+            features: default
+          - platform: macos
+            toolchain: 1.51.0
+            features: default
+          - platform: macos
+            toolchain: stable
+            features: with-tokio
+          - platform: macos
+            toolchain: 1.51.0
+            features: with-tokio
+          - platform: ubuntu
+            toolchain: stable
+            features: default
+          - platform: ubuntu
+            toolchain: 1.51.0
+            features: default
+          - platform: ubuntu
+            toolchain: stable
+            features: with-tokio
+          - platform: ubuntu
+            toolchain: 1.51.0
+            features: with-tokio
+          - platform: windows
+            toolchain: stable
+            features: default
+          - platform: windows
+            toolchain: 1.51.0
+            features: default
+          - platform: windows
+            toolchain: stable
+            features: with-tokio
+          - platform: windows
+            toolchain: 1.51.0
+            features: with-tokio
+
+    name: "Test on ${{ matrix.platform }} with Rust ${{ matrix.toolchain }} (feat: ${{ matrix.features }})"
+    runs-on: "${{ matrix.platform }}-latest"
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: "${{ matrix.toolchain }}"
+          default: true
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --features ${{ matrix.features }}
