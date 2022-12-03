@@ -6,6 +6,8 @@
 
 # Command Group
 
+test
+
 _Extension to [`Command`](https://doc.rust-lang.org/std/process/struct.Command.html) to spawn in a process group._
 
 - **[API documentation][docs]**.
