@@ -25,7 +25,7 @@ features = ["io-util", "macros", "process", "rt"]
 optional = true
 
 [target.'cfg(unix)'.dependencies.nix]
-version = "0.25.1"
+version = "0.26.1"
 default-features = false
 features = ["fs", "poll", "signal"]
 
