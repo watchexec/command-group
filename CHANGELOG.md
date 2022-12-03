@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+## v2.0.0 (2022-12-04)
+
 - Increase MSRV to 1.60.0 and change policy for increasing it (no longer a breaking change).
 
 ## v1.0.8 (2021-10-16)
