@@ -1,33 +1,25 @@
-name: Try this
+name: Merge (with Bors)
 on:
-  pull_request:
+  push:
+    branches:
+      - staging
+      - trying
 
 jobs:
   check:
     strategy:
-      fail-fast: false
       matrix:
-        platform: [macos]
+        platform:
+          - macos
+          - ubuntu
+          - windows
+        toolchain:
+          - stable
+          - 1.60.0
         features:
           - default
           - with-tokio
-        toolchain:
-          - stable
-          - 1.51.0
-          - 1.52.0
-          - 1.53.0
-          - 1.54.0
-          - 1.55.0
-          - 1.56.0
-          - 1.57.0
-          - 1.58.0
-          - 1.59.0
-          - 1.60.0
-          - 1.61.0
-          - 1.62.0
-          - 1.63.0
-          - 1.64.0
-          - 1.65.0
+
     name: "Test on ${{ matrix.platform }} with Rust ${{ matrix.toolchain }} (feat: ${{ matrix.features }})"
     runs-on: "${{ matrix.platform }}-latest"
 

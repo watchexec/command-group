@@ -6,10 +6,10 @@ jobs:
   clippy:
     strategy:
       matrix:
-        include:
-          - platform: macos
-          - platform: ubuntu
-          - platform: windows
+        platform:
+          - macos
+          - ubuntu
+          - windows
 
     name: "Clippy on ${{ matrix.platform }}"
     runs-on: "${{ matrix.platform }}-latest"
