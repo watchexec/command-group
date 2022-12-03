@@ -31,6 +31,7 @@ jobs:
         run: |
           rustup toolchain install --profile minimal --no-self-update ${{ matrix.toolchain }}
           rustup default ${{ matrix.toolchain }}
+          rustup component add clippy
 
       - name: Configure caching
         uses: actions/cache@v3
