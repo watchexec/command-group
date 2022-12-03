@@ -9,43 +9,16 @@ jobs:
   check:
     strategy:
       matrix:
-        include:
-          - platform: macos
-            toolchain: stable
-            features: default
-          - platform: macos
-            toolchain: 1.51.0
-            features: default
-          - platform: macos
-            toolchain: stable
-            features: with-tokio
-          - platform: macos
-            toolchain: 1.51.0
-            features: with-tokio
-          - platform: ubuntu
-            toolchain: stable
-            features: default
-          - platform: ubuntu
-            toolchain: 1.51.0
-            features: default
-          - platform: ubuntu
-            toolchain: stable
-            features: with-tokio
-          - platform: ubuntu
-            toolchain: 1.51.0
-            features: with-tokio
-          - platform: windows
-            toolchain: stable
-            features: default
-          - platform: windows
-            toolchain: 1.51.0
-            features: default
-          - platform: windows
-            toolchain: stable
-            features: with-tokio
-          - platform: windows
-            toolchain: 1.51.0
-            features: with-tokio
+        platform:
+          - macos
+          - ubuntu
+          - windows
+        toolchain:
+          - stable
+          - 1.60.0
+        features:
+          - default
+          - with-tokio
 
     name: "Test on ${{ matrix.platform }} with Rust ${{ matrix.toolchain }} (feat: ${{ matrix.features }})"
     runs-on: "${{ matrix.platform }}-latest"

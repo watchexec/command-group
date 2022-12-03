@@ -12,8 +12,9 @@ homepage = "https://github.com/watchexec/command-group"
 repository = "https://github.com/watchexec/command-group"
 readme = "README.md"
 
-edition = "2018"
+edition = "2021"
 exclude = ["/bin", "/.github"]
+rust-version = "1.60.0"
 
 [dependencies]
 async-trait = { version = "0.1.50", optional = true }
