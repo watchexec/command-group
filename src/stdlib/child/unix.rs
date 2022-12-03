@@ -67,15 +67,49 @@ impl ChildImp {
 	fn wait_imp(&mut self, flag: WaitPidFlag) -> Result<Option<ExitStatus>> {
 		let negpid = Pid::from_raw(-self.pgid.as_raw());
 
-		// we can't use the safe wrapper directly because it doesn't return the raw status, and we
-		// need it to convert to the std's ExitStatus.
-		let mut status: i32 = 0;
-		match unsafe { libc::waitpid(negpid.into(), &mut status as *mut libc::c_int, flag.bits()) }
-		{
-			0 => Ok(None),
-			res => Errno::result(res)
-				.map_err(Error::from)
-				.map(|_| Some(ExitStatus::from_raw(status))),
+		// Wait for processes in a loop until every process in this
+		// process group has exited (this ensures that we reap any
+		// zombies that may have been created if the parent exited after
+		// spawning children, but didn't wait for those children to
+		// exit).
+		let mut parent_exit_status: Option<ExitStatus> = None;
+		loop {
+			// we can't use the safe wrapper directly because it doesn't
+			// return the raw status, and we need it to convert to the
+			// std's ExitStatus.
+			let mut status: i32 = 0;
+			match unsafe {
+				libc::waitpid(negpid.into(), &mut status as *mut libc::c_int, flag.bits())
+			} {
+				0 => {
+					// Zero should only happen if WNOHANG was passed in,
+					// and means that no processes have yet to exit.
+					return Ok(None);
+				}
+				-1 => {
+					match Errno::last() {
+						Errno::ECHILD => {
+							// No more children to reap; this is a
+							// graceful exit.
+							return Ok(parent_exit_status);
+						}
+						errno => {
+							return Err(Error::from(errno));
+						}
+					}
+				}
+				pid => {
+					// *A* process exited. Was it the parent process
+					// that we started? If so, collect the exit signal,
+					// otherwise we reaped a zombie process and should
+					// continue in the loop.
+					if self.pgid.as_raw() == pid {
+						parent_exit_status = Some(ExitStatus::from_raw(status));
+					} else {
+						// Reaped a zombie child; keep looping.
+					}
+				}
+			};
 		}
 	}
 
