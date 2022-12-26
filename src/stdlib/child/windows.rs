@@ -10,7 +10,7 @@ use winapi::{
 	},
 	um::{
 		handleapi::CloseHandle, ioapiset::GetQueuedCompletionStatus, jobapi2::TerminateJobObject,
-		minwinbase::LPOVERLAPPED, winbase::INFINITE, winnt::HANDLE,
+		minwinbase::OVERLAPPED, winbase::INFINITE, winnt::HANDLE,
 	},
 };
 
@@ -70,21 +70,22 @@ impl ChildImp {
 	fn wait_imp(&self, timeout: DWORD) -> Result<()> {
 		let mut code: DWORD = 0;
 		let mut key: ULONG_PTR = 0;
-		let mut overlapped = mem::MaybeUninit::<LPOVERLAPPED>::uninit();
+		let mut overlapped = mem::MaybeUninit::<OVERLAPPED>::uninit();
+		let mut lp_overlapped = overlapped.as_mut_ptr();
 
 		let result = unsafe {
 			GetQueuedCompletionStatus(
 				self.handles.completion_port,
 				&mut code,
 				&mut key,
-				overlapped.as_mut_ptr(),
+				&mut lp_overlapped,
 				timeout,
 			)
 		};
 
 		// ignore timing out errors unless the timeout was specified to INFINITE
 		// https://docs.microsoft.com/en-us/windows/win32/api/ioapiset/nf-ioapiset-getqueuedcompletionstatus
-		if timeout != INFINITE && result == FALSE && overlapped.as_ptr().is_null() {
+		if timeout != INFINITE && result == FALSE && lp_overlapped.is_null() {
 			return Ok(());
 		}
 
