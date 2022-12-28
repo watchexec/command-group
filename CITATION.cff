@@ -5,7 +5,7 @@ message: If you use this software, please cite it using these metadata.
 
 title: Command Group
 version: 1.0.4
-date-released: 2022-12-04
+date-released: 2022-12-28
 
 repository-code: https://github.com/watchexec/command-group
 license: Apache-2.0 OR MIT
