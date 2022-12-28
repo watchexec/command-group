@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+- Fix bug on Windows where the wrong pointer was being null checked, leading to timeout errors. ([#13](https://github.com/watchexec/command-group/pull/13))
+
 ## v2.0.0 (2022-12-04)
 
 - Increase MSRV to 1.60.0 and change policy for increasing it (no longer a breaking change).
