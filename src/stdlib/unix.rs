@@ -15,4 +15,8 @@ impl CommandGroup for Command {
 
 		self.spawn().map(GroupChild::new)
 	}
+
+	fn group(&mut self) -> crate::builder::GroupBuilder<std::process::Command> {
+		crate::builder::GroupBuilder::new(self)
+	}
 }

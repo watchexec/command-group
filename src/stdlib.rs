@@ -6,7 +6,7 @@ use std::{
 	process::{ExitStatus, Output},
 };
 
-use crate::GroupChild;
+use crate::{builder::GroupBuilder, GroupChild};
 
 #[cfg(target_family = "windows")]
 mod windows;
@@ -40,6 +40,10 @@ pub trait CommandGroup {
 	///         .expect("ls command failed to start");
 	/// ```
 	fn group_spawn(&mut self) -> Result<GroupChild>;
+
+	/// Converts the implementor into a [`GroupBuilder`](crate::GroupBuilder), which can be used to
+	/// set flags that are not available on the `Command` type.
+	fn group(&mut self) -> GroupBuilder<std::process::Command>;
 
 	/// Executes the command as a child process group, waiting for it to finish and
 	/// collecting all of its output.

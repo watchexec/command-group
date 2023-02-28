@@ -20,4 +20,8 @@ impl AsyncCommandGroup for Command {
 
 		Ok(AsyncGroupChild::new(child, job, completion_port))
 	}
+
+	fn group(self) -> crate::builder::GroupBuilder<tokio::process::Command> {
+		crate::builder::GroupBuilder::new(self)
+	}
 }

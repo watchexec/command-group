@@ -13,4 +13,8 @@ impl AsyncCommandGroup for Command {
 
 		self.spawn().map(AsyncGroupChild::new)
 	}
+
+	fn group(&mut self) -> crate::builder::GroupBuilder<tokio::process::Command> {
+		crate::builder::GroupBuilder::new(self)
+	}
 }
