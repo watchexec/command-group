@@ -17,5 +17,6 @@ async fn main() {
 		.args(&["-m", "http.server", "8000"])
 		.stderr(Stdio::null())
 		.stdout(Stdio::null())
-		.group_spawn();
+		.group_spawn()
+		.expect("failed to spawn server");
 }

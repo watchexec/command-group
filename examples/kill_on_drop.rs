@@ -15,5 +15,6 @@ async fn main() {
 		.stdout(Stdio::null())
 		.group()
 		.kill_on_drop(true)
-		.spawn();
+		.spawn()
+		.expect("failed to spawn server");
 }

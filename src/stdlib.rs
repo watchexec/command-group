@@ -6,7 +6,7 @@ use std::{
 	process::{ExitStatus, Output},
 };
 
-use crate::{builder::GroupBuilder, GroupChild};
+use crate::{builder::CommandGroupBuilder, GroupChild};
 
 #[cfg(target_family = "windows")]
 mod windows;
@@ -41,9 +41,9 @@ pub trait CommandGroup {
 	/// ```
 	fn group_spawn(&mut self) -> Result<GroupChild>;
 
-	/// Converts the implementor into a [`GroupBuilder`](crate::GroupBuilder), which can be used to
+	/// Converts the implementor into a [`CommandGroupBuilder`](crate::CommandGroupBuilder), which can be used to
 	/// set flags that are not available on the `Command` type.
-	fn group(&mut self) -> GroupBuilder<std::process::Command>;
+	fn group(&mut self) -> CommandGroupBuilder<std::process::Command>;
 
 	/// Executes the command as a child process group, waiting for it to finish and
 	/// collecting all of its output.

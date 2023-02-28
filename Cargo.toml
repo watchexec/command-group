@@ -58,6 +58,9 @@ all-features = true
 name = "basic"
 
 [[example]]
+name = "builder"
+
+[[example]]
 name = "async"
 required-features = ["with-tokio"]
 

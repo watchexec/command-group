@@ -47,7 +47,9 @@ pub trait AsyncCommandGroup {
 	/// ```
 	fn group_spawn(&mut self) -> Result<AsyncGroupChild>;
 
-	fn group(&mut self) -> crate::builder::GroupBuilder<tokio::process::Command>;
+	/// Converts the implementor into a [`CommandGroupBuilder`](crate::CommandGroupBuilder), which can be used to
+	/// set flags that are not available on the `Command` type.
+	fn group(&mut self) -> crate::builder::CommandGroupBuilder<tokio::process::Command>;
 
 	/// Executes the command as a child process group, waiting for it to finish and
 	/// collecting all of its output.
@@ -115,19 +117,5 @@ pub trait AsyncCommandGroup {
 	async fn group_status(&mut self) -> Result<ExitStatus> {
 		let mut child = self.group_spawn()?;
 		child.wait().await
-	}
-}
-
-impl crate::builder::GroupBuilder<'_, tokio::process::Command> {
-	pub fn kill_on_drop(mut self, kill_on_drop: bool) -> Self {
-		self.kill_on_drop = kill_on_drop;
-		self
-	}
-
-	pub fn spawn(mut self) -> Result<AsyncGroupChild> {
-		self.command.kill_on_drop(self.kill_on_drop);
-		#[cfg(target_os = "windows")]
-		self.command.creation_flags(self.creation_flags);
-		self.command.group_spawn()
 	}
 }

@@ -87,7 +87,7 @@ pub(crate) fn job_object(kill_on_drop: bool) -> Result<(HANDLE, HANDLE)> {
 
 	let mut info = JOBOBJECT_EXTENDED_LIMIT_INFORMATION::default();
 
-	if (kill_on_drop) {
+	if kill_on_drop {
 		info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
 	}
 
