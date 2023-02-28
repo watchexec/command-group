@@ -43,7 +43,7 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
 
-      - run: cargo test --features ${{ matrix.features }}
+      - run: cargo test --features ${{ matrix.features }} --all-targets
       - run: cargo clippy --features ${{ matrix.features }}
 
   formatting:
