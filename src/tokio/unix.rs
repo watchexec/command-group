@@ -1,24 +1,8 @@
-use std::io::{Error, Result};
+use std::io::Error;
 
 use crate::builder::CommandGroupBuilder;
-use crate::{AsyncCommandGroup, AsyncGroupChild};
+use crate::AsyncGroupChild;
 use nix::unistd::setsid;
-use tokio::process::Command;
-
-#[async_trait::async_trait]
-impl AsyncCommandGroup for Command {
-	fn group_spawn(&mut self) -> Result<AsyncGroupChild> {
-		unsafe {
-			self.pre_exec(|| setsid().map_err(Error::from).map(|_| ()));
-		}
-
-		self.spawn().map(AsyncGroupChild::new)
-	}
-
-	fn group(&mut self) -> crate::builder::CommandGroupBuilder<tokio::process::Command> {
-		crate::builder::CommandGroupBuilder::new(self)
-	}
-}
 
 impl CommandGroupBuilder<'_, tokio::process::Command> {
 	/// Executes the command as a child process group, returning a handle to it.
@@ -32,7 +16,7 @@ impl CommandGroupBuilder<'_, tokio::process::Command> {
 	/// Basic usage:
 	///
 	/// ```no_run
-	/// use std::process::Command;
+	/// use tokio::process::Command;
 	/// use command_group::CommandGroup;
 	///
 	/// Command::new("ls")
@@ -41,6 +25,11 @@ impl CommandGroupBuilder<'_, tokio::process::Command> {
 	///         .expect("ls command failed to start");
 	/// ```
 	pub fn spawn(&mut self) -> std::io::Result<AsyncGroupChild> {
-		self.command.group_spawn()
+		unsafe {
+			self.command
+				.pre_exec(|| setsid().map_err(Error::from).map(|_| ()));
+		}
+
+		self.command.spawn().map(AsyncGroupChild::new)
 	}
 }

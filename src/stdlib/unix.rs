@@ -1,25 +1,7 @@
-use std::{
-	io::{Error, Result},
-	os::unix::process::CommandExt,
-	process::Command,
-};
+use std::{io::Error, os::unix::process::CommandExt, process::Command};
 
-use crate::{builder::CommandGroupBuilder, CommandGroup, GroupChild};
+use crate::{builder::CommandGroupBuilder, GroupChild};
 use nix::unistd::setsid;
-
-impl CommandGroup for Command {
-	fn group_spawn(&mut self) -> Result<GroupChild> {
-		unsafe {
-			self.pre_exec(|| setsid().map_err(Error::from).map(|_| ()));
-		}
-
-		self.spawn().map(GroupChild::new)
-	}
-
-	fn group(&mut self) -> CommandGroupBuilder<Command> {
-		CommandGroupBuilder::new(self)
-	}
-}
 
 impl CommandGroupBuilder<'_, Command> {
 	/// Executes the command as a child process group, returning a handle to it.
@@ -42,6 +24,11 @@ impl CommandGroupBuilder<'_, Command> {
 	///         .expect("ls command failed to start");
 	/// ```
 	pub fn spawn(&mut self) -> std::io::Result<GroupChild> {
-		self.command.group_spawn()
+		unsafe {
+			self.command
+				.pre_exec(|| setsid().map_err(Error::from).map(|_| ()));
+		}
+
+		self.command.spawn().map(GroupChild::new)
 	}
 }

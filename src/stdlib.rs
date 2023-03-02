@@ -3,7 +3,7 @@
 
 use std::{
 	io::Result,
-	process::{ExitStatus, Output},
+	process::{Command, ExitStatus, Output},
 };
 
 use crate::{builder::CommandGroupBuilder, GroupChild};
@@ -17,9 +17,6 @@ mod unix;
 pub(crate) mod child;
 
 /// Extensions for [`Command`](std::process::Command) adding support for process groups.
-///
-/// At the moment, `kill_on_drop(false)` is not supported on Windows, and may or may not work on
-/// other platforms.
 pub trait CommandGroup {
 	/// Executes the command as a child process group, returning a handle to it.
 	///
@@ -39,7 +36,9 @@ pub trait CommandGroup {
 	///         .group_spawn()
 	///         .expect("ls command failed to start");
 	/// ```
-	fn group_spawn(&mut self) -> Result<GroupChild>;
+	fn group_spawn(&mut self) -> Result<GroupChild> {
+		self.group().spawn()
+	}
 
 	/// Converts the implementor into a [`CommandGroupBuilder`](crate::CommandGroupBuilder), which can be used to
 	/// set flags that are not available on the `Command` type.
@@ -102,5 +101,11 @@ pub trait CommandGroup {
 	/// ```
 	fn group_status(&mut self) -> Result<ExitStatus> {
 		self.group_spawn().and_then(|mut child| child.wait())
+	}
+}
+
+impl CommandGroup for Command {
+	fn group<'a>(&'a mut self) -> CommandGroupBuilder<'a, Command> {
+		CommandGroupBuilder::new(self)
 	}
 }
