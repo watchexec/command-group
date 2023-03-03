@@ -16,6 +16,9 @@ edition = "2021"
 exclude = ["/bin", "/.github"]
 rust-version = "1.60.0"
 
+# there are a few windows-specific ones
+autoexamples = false
+
 [dependencies]
 async-trait = { version = "0.1.50", optional = true }
 
@@ -50,3 +53,25 @@ tokio = { version = "1.10.0", features = ["io-util", "macros", "process", "rt", 
 
 [package.metadata.docs.rs]
 all-features = true
+
+[[example]]
+name = "basic"
+
+[[example]]
+name = "builder"
+
+[[example]]
+name = "async"
+required-features = ["with-tokio"]
+
+[[example]]
+name = "kill_on_drop"
+required-features = ["with-tokio"]
+
+[[example]]
+name = "daemon"
+required-features = ["with-tokio"]
+
+[[target.'cfg(windows)'.example]]
+name = "with_flags"
+required-features = ["with-tokio"]

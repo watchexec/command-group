@@ -29,6 +29,8 @@ mod unix_ext;
 #[cfg(feature = "with-tokio")]
 pub mod tokio;
 
+pub mod builder;
+
 #[cfg(windows)]
 pub(crate) mod winres;
 

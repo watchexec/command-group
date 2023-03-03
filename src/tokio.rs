@@ -6,7 +6,9 @@ use std::{
 	process::{ExitStatus, Output},
 };
 
-use crate::AsyncGroupChild;
+use tokio::process::Command;
+
+use crate::{builder::CommandGroupBuilder, AsyncGroupChild};
 
 #[cfg(target_family = "windows")]
 mod windows;
@@ -19,9 +21,6 @@ pub(crate) mod child;
 /// Extensions for [`Command`](::tokio::process::Command) adding support for process groups.
 ///
 /// This uses [`async_trait`] for now to provide async methods as a trait.
-///
-/// At the moment, `kill_on_drop(false)` is not supported on Windows, and may or may not work on
-/// other platforms.
 #[async_trait::async_trait]
 pub trait AsyncCommandGroup {
 	/// Executes the command as a child process group, returning a handle to it.
@@ -45,7 +44,13 @@ pub trait AsyncCommandGroup {
 	///         .expect("ls command failed to start");
 	/// # }
 	/// ```
-	fn group_spawn(&mut self) -> Result<AsyncGroupChild>;
+	fn group_spawn(&mut self) -> Result<AsyncGroupChild> {
+		self.group().spawn()
+	}
+
+	/// Converts the implementor into a [`CommandGroupBuilder`](crate::CommandGroupBuilder), which can be used to
+	/// set flags that are not available on the `Command` type.
+	fn group(&mut self) -> crate::builder::CommandGroupBuilder<tokio::process::Command>;
 
 	/// Executes the command as a child process group, waiting for it to finish and
 	/// collecting all of its output.
@@ -113,5 +118,12 @@ pub trait AsyncCommandGroup {
 	async fn group_status(&mut self) -> Result<ExitStatus> {
 		let mut child = self.group_spawn()?;
 		child.wait().await
+	}
+}
+
+#[async_trait::async_trait]
+impl AsyncCommandGroup for Command {
+	fn group<'a>(&'a mut self) -> CommandGroupBuilder<'a, Command> {
+		CommandGroupBuilder::new(self)
 	}
 }

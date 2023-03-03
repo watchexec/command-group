@@ -63,7 +63,7 @@ pub(crate) fn res_neg(ret: DWORD) -> Result<DWORD> {
 	}
 }
 
-pub(crate) fn job_object() -> Result<(HANDLE, HANDLE)> {
+pub(crate) fn job_object(kill_on_drop: bool) -> Result<(HANDLE, HANDLE)> {
 	let job = res_null(unsafe { CreateJobObjectW(ptr::null_mut(), ptr::null()) })?;
 
 	let completion_port =
@@ -86,7 +86,11 @@ pub(crate) fn job_object() -> Result<(HANDLE, HANDLE)> {
 	})?;
 
 	let mut info = JOBOBJECT_EXTENDED_LIMIT_INFORMATION::default();
-	info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+
+	if kill_on_drop {
+		info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+	}
+
 	res_bool(unsafe {
 		SetInformationJobObject(
 			job,
