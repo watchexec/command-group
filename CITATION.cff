@@ -1,10 +1,8 @@
-# YAML 1.2
----
-cff-version: "1.1.0"
+cff-version: 1.2.0
 message: If you use this software, please cite it using these metadata.
+title: "Command Group: extension to Command to spawn in a process group"
 
-title: Command Group
-version: 1.0.4
+version: "2.0.1"
 date-released: 2022-12-28
 
 repository-code: https://github.com/watchexec/command-group
@@ -13,4 +11,4 @@ license: Apache-2.0 OR MIT
 authors:
   - family-names: Saparelli
     given-names: Félix
-...
+    orcid: https://orcid.org/0000-0002-2010-630X
