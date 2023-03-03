@@ -47,3 +47,5 @@ let mut child = Command::new("watch").arg("ls").group_spawn()?;
 let status = child.wait().await?;
 dbg!(status);
 ```
+
+Also see the [Examples](./examples)!
