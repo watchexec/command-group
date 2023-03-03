@@ -30,8 +30,6 @@ impl CommandGroupBuilder<'_, Command> {
 		self.command
 			.creation_flags(self.creation_flags | CREATE_SUSPENDED);
 
-		// note: same a as in CommandGroup::group_spawn
-		// but without creation_flags(CREATE_SUSPENDED)
 		let (job, completion_port) = job_object(self.kill_on_drop)?;
 		let child = self.command.spawn()?;
 		assign_child(child.as_raw_handle(), job)?;
