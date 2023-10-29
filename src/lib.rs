@@ -6,11 +6,7 @@
 #![doc = "\n"]
 #![cfg_attr(
 	unix,
-	doc = "On Unix, the [`UnixChildExt`] trait additionally provides"
-)]
-#![cfg_attr(
-	unix,
-	doc = "support for sending signals to processes and process groups (it’s implemented on this crate’s [`GroupChild`],"
+	doc = "On Unix, the [`UnixChildExt`] trait additionally provides support for sending signals to processes and process groups (it’s implemented on this crate’s [`GroupChild`],"
 )]
 #![cfg_attr(
 	all(unix, feature = "with-tokio"),

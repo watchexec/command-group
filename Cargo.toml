@@ -14,21 +14,21 @@ readme = "README.md"
 
 edition = "2021"
 exclude = ["/bin", "/.github"]
-rust-version = "1.60.0"
+rust-version = "1.68.0"
 
 # there are a few windows-specific ones
 autoexamples = false
 
 [dependencies]
-async-trait = { version = "0.1.50", optional = true }
+async-trait = { version = "0.1.74", optional = true }
 
 [dependencies.tokio]
-version = "1.10.0"
+version = "1.33.0"
 features = ["io-util", "macros", "process", "rt"]
 optional = true
 
 [target.'cfg(unix)'.dependencies.nix]
-version = "0.26.1"
+version = "0.27.1"
 default-features = false
 features = ["fs", "poll", "signal"]
 

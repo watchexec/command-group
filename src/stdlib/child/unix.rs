@@ -1,9 +1,12 @@
 use std::{
 	convert::TryInto,
 	io::{Error, ErrorKind, Read, Result},
-	os::unix::{
-		io::{AsRawFd, RawFd},
-		process::ExitStatusExt,
+	os::{
+		fd::BorrowedFd,
+		unix::{
+			io::{AsRawFd, RawFd},
+			process::ExitStatusExt,
+		},
 	},
 	process::{Child, ChildStderr, ChildStdin, ChildStdout, ExitStatus},
 };
@@ -139,9 +142,13 @@ impl ChildImp {
 		set_nonblocking(out_fd, true)?;
 		set_nonblocking(err_fd, true)?;
 
+		// SAFETY: these are dropped at the same time as all other FDs here
+		let out_bfd = unsafe { BorrowedFd::borrow_raw(out_fd) };
+		let err_bfd = unsafe { BorrowedFd::borrow_raw(err_fd) };
+
 		let mut fds = [
-			PollFd::new(out_fd, PollFlags::POLLIN),
-			PollFd::new(err_fd, PollFlags::POLLIN),
+			PollFd::new(&out_bfd, PollFlags::POLLIN),
+			PollFd::new(&err_bfd, PollFlags::POLLIN),
 		];
 
 		loop {
