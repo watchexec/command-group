@@ -8,7 +8,7 @@ _Extension to [`Command`](https://doc.rust-lang.org/std/process/struct.Command.h
 
 - **[API documentation][docs]**.
 - [Dual-licensed][copyright] with Apache 2.0 and MIT.
-- Minimum Supported Rust Version: 1.60.0.
+- Minimum Supported Rust Version: 1.68.0.
   - Only the last five stable versions are supported.
   - MSRV increases within that range at publish time will not incur major version bumps.
 
