@@ -207,8 +207,8 @@ impl AsyncGroupChild {
 	///
 	/// See [the Tokio documentation](Child::wait) for more.
 	///
-	/// The current implementation spawns a blocking task on the Tokio thread pool; contributions
-	/// are welcome for a more async-y version.
+	/// The current implementation spawns a blocking task on the Tokio thread pool **and is not
+	/// cancel-safe** (you shouldn't call it twice); contributions are welcome for a better version.
 	///
 	/// # Examples
 	///
