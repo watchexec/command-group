@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: If you use this software, please cite it using these metadata.
 title: "Command Group: extension to Command to spawn in a process group"
 
-version: "2.1.1"
+version: "3.0.0"
 date-released: 2023-10-30
 
 repository-code: https://github.com/watchexec/command-group
