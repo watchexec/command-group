@@ -2,11 +2,13 @@
 
 ## Next (YYYY-MM-DD)
 
-## v2.1.1 (2023-10-30)
-
 - Update `nix` to 0.27.
 - Increase MSRV to 1.68 (within policy).
 - Add note to documentation for Tokio `Child::wait` wrt cancel safety. ([#21](https://github.com/watchexec/command-group/issues/21))
+
+## v2.1.1 (2023-10-30)
+
+(Same as 3.0.0, but yanked due to breakage.)
 
 ## v2.1.0 (2023-03-04)
 
