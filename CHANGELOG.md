@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+## v2.1.1 (2023-10-30)
+
 ## v2.1.0 (2023-03-04)
 
 - Add new `.group()` builder API to allow setting Windows flags and use `kill_on_drop`. ([#15](https://github.com/watchexec/command-group/issues/15), [#17](https://github.com/watchexec/command-group/issues/17), [#18](https://github.com/watchexec/command-group/issues/18))
