@@ -207,8 +207,12 @@ impl AsyncGroupChild {
 	///
 	/// See [the Tokio documentation](Child::wait) for more.
 	///
-	/// The current implementation spawns a blocking task on the Tokio thread pool **and is not
-	/// cancel-safe** (you shouldn't call it twice); contributions are welcome for a better version.
+	/// The current implementation spawns a blocking task on the Tokio thread pool; contributions
+	/// are welcome for a better version. Additionally, there is no way to cancel the underlying
+	/// wait() call, so cancelling this future will not cancel the wait. A waited process that exits
+	/// will have its resources cleaned up by the kernel: if the application is no longer listening
+	/// for the underlying wait(), it will not know that the process has exited and will try to wait
+	/// on it again, which may fail, or could even attach to the recycled PID (of another process).
 	///
 	/// # Examples
 	///
