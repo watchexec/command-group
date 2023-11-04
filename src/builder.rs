@@ -22,14 +22,14 @@ impl<'a, T> CommandGroupBuilder<'a, T> {
 	}
 
 	/// See [`tokio::process::Command::kill_on_drop`].
-	#[cfg(any(target_os = "windows", feature = "with-tokio"))]
+	#[cfg(any(windows, feature = "with-tokio"))]
 	pub fn kill_on_drop(&mut self, kill_on_drop: bool) -> &mut Self {
 		self.kill_on_drop = kill_on_drop;
 		self
 	}
 
 	/// Set the creation flags for the process.
-	#[cfg(any(target_os = "windows"))]
+	#[cfg(windows)]
 	pub fn creation_flags(&mut self, creation_flags: u32) -> &mut Self {
 		self.creation_flags = creation_flags;
 		self

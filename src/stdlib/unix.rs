@@ -20,7 +20,7 @@ impl CommandGroupBuilder<'_, Command> {
 	///
 	/// Command::new("ls")
 	///         .group()
-	/// 		.spawn()
+	///         .spawn()
 	///         .expect("ls command failed to start");
 	/// ```
 	pub fn spawn(&mut self) -> std::io::Result<GroupChild> {

@@ -5,9 +5,9 @@ use std::{
 };
 
 #[cfg(unix)]
-pub(self) use unix::ChildImp;
+use unix::ChildImp;
 #[cfg(windows)]
-pub(self) use windows::ChildImp;
+use windows::ChildImp;
 
 #[cfg(unix)]
 use crate::UnixChildExt;

@@ -105,7 +105,7 @@ pub trait CommandGroup {
 }
 
 impl CommandGroup for Command {
-	fn group<'a>(&'a mut self) -> CommandGroupBuilder<'a, Command> {
+	fn group(&mut self) -> CommandGroupBuilder<'_, Command> {
 		CommandGroupBuilder::new(self)
 	}
 }
