@@ -127,8 +127,9 @@ impl GroupChild {
 		self.imp.into_inner()
 	}
 
-	/// Forces the child process group to exit. If the group has already exited, an [`InvalidInput`]
-	/// error is returned.
+	/// Forces the child process group to exit.
+	///
+	/// If the group has already exited, an [`InvalidInput`] error is returned.
 	///
 	/// This is equivalent to sending a SIGKILL on Unix platforms.
 	///
