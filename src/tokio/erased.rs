@@ -20,6 +20,17 @@ pub enum ErasedChild {
 }
 
 impl ErasedChild {
+	/// Returns the OS-assigned process (group) identifier.
+	///
+	/// - Grouped: [`AsyncGroupChild::id`]
+	/// - Ungrouped: [`Child::id`]
+	pub fn id(&mut self) -> Option<u32> {
+		match self {
+			Self::Grouped(c) => c.id(),
+			Self::Ungrouped(c) => c.id(),
+		}
+	}
+
 	/// Forces the child to exit.
 	///
 	/// - Grouped: [`AsyncGroupChild::kill`]

@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+- Add `ErasedChild::id()` method.
+
 ## v4.0.0 (2023-11-05)
 
 - Clarify why and in which situations `AsyncGroupChild::wait` may not behave as expected when cancelled.
