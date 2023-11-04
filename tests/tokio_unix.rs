@@ -101,7 +101,7 @@ async fn kill_and_try_wait_normal() -> Result<()> {
 async fn kill_and_try_wait_group() -> Result<()> {
 	let mut child = Command::new("yes").stdout(Stdio::null()).group_spawn()?;
 	assert!(child.try_wait()?.is_none());
-	child.kill()?;
+	child.kill().await?;
 	sleep(DIE_TIME).await;
 	assert!(child.try_wait()?.is_some());
 	sleep(DIE_TIME).await;
