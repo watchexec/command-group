@@ -48,7 +48,7 @@ sed -E -i "s/^version: \"?$extver\"?/version: \"$newver\"/1" CITATION.cff
 sed -E -i "s/^date-released: .+$/date-released: $date/1" CITATION.cff
 
 cargo check
-cargo publish --dry-run
+cargo publish --dry-run --allow-dirty
 
 git commit -am "$newver"
 git tag -sam "$newver" "v$newver"
