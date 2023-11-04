@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+## v4.1.0 (2023-11-05)
+
 - Add `ErasedChild::id()` method.
 
 ## v4.0.0 (2023-11-05)
