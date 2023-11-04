@@ -59,7 +59,7 @@ impl ChildImp {
 		self.inner
 	}
 
-	pub fn kill(&mut self) -> Result<()> {
+	pub fn start_kill(&mut self) -> Result<()> {
 		res_bool(unsafe { TerminateJobObject(self.handles.job, 1) })
 	}
 

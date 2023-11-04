@@ -135,13 +135,11 @@ impl AsyncGroupChild {
 		self.imp.into_inner()
 	}
 
-	/// Forces the child process group to exit. If the group has already exited, an [`InvalidInput`]
-	/// error is returned.
+	/// Forces the child process group to exit.
+	///
+	/// If the group has already exited, an [`InvalidInput`] error is returned.
 	///
 	/// This is equivalent to sending a SIGKILL on Unix platforms.
-	///
-	/// **Unlike the Tokio implementation**, this method does not wait for the child process group,
-	/// and only sends the kill. You’ll need to call [`wait()`](Self::wait) yourself.
 	///
 	/// See [the Tokio documentation](Child::kill) for more.
 	///
@@ -157,7 +155,7 @@ impl AsyncGroupChild {
 	///
 	/// let mut command = Command::new("yes");
 	/// if let Ok(mut child) = command.group_spawn() {
-	///     child.kill().expect("command wasn't running");
+	///     child.kill().await.expect("command wasn't running");
 	/// } else {
 	///     println!("yes command didn't start");
 	/// }
@@ -165,8 +163,25 @@ impl AsyncGroupChild {
 	/// ```
 	///
 	/// [`InvalidInput`]: std::io::ErrorKind::InvalidInput
-	pub fn kill(&mut self) -> Result<()> {
-		self.imp.kill()
+	pub async fn kill(&mut self) -> Result<()> {
+		self.start_kill()?;
+		self.wait().await?;
+		Ok(())
+	}
+
+	/// Attempts to force the child to exit, but does not wait for the request to take effect.
+	///
+	/// This is equivalent to sending a SIGKILL on Unix platforms.
+	///
+	/// Note that on Unix platforms it is possible for a zombie process to remain after a kill is
+	/// sent; to avoid this, the caller should ensure that either `child.wait().await` or
+	/// `child.try_wait()` is invoked successfully.
+	///
+	/// See [the Tokio documentation](Child::start_kill) for more.
+	///
+	/// [`InvalidInput`]: std::io::ErrorKind::InvalidInput
+	pub fn start_kill(&mut self) -> Result<()> {
+		self.imp.start_kill()
 	}
 
 	/// Returns the OS-assigned process group identifier.

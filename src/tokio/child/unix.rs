@@ -61,7 +61,7 @@ impl ChildImp {
 		killpg(self.pgid, sig).map_err(Error::from)
 	}
 
-	pub fn kill(&mut self) -> Result<()> {
+	pub fn start_kill(&mut self) -> Result<()> {
 		self.signal_imp(Signal::SIGKILL)
 	}
 
