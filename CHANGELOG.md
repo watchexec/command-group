@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+## v4.0.0 (2023-11-05)
+
 - Clarify why and in which situations `AsyncGroupChild::wait` may not behave as expected when cancelled.
 - Add `AsyncGroupChild::start_kill` to align with Tokio's `Child::start_kill`.
 - Change `AsyncGroupChild::kill` to also `wait()` on the child, to align with Tokio's `Child::kill`.
