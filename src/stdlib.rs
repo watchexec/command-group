@@ -8,6 +8,9 @@ use std::{
 
 use crate::{builder::CommandGroupBuilder, GroupChild};
 
+#[doc(inline)]
+pub use erased::ErasedChild;
+
 #[cfg(target_family = "windows")]
 mod windows;
 
@@ -15,6 +18,7 @@ mod windows;
 mod unix;
 
 pub(crate) mod child;
+pub(crate) mod erased;
 
 /// Extensions for [`Command`](std::process::Command) adding support for process groups.
 pub trait CommandGroup {

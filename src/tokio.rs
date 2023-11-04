@@ -10,6 +10,9 @@ use tokio::process::Command;
 
 use crate::{builder::CommandGroupBuilder, AsyncGroupChild};
 
+#[doc(inline)]
+pub use erased::ErasedChild;
+
 #[cfg(target_family = "windows")]
 mod windows;
 
@@ -17,6 +20,7 @@ mod windows;
 mod unix;
 
 pub(crate) mod child;
+pub(crate) mod erased;
 
 /// Extensions for [`Command`](::tokio::process::Command) adding support for process groups.
 ///
