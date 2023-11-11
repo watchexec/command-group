@@ -3,7 +3,7 @@
 ## Next (YYYY-MM-DD)
 
 - Change `UnixChildExt::signal` to take `&self` instead of `&mut self`.
-- Tokio grouped child `wait`s using Tokio's `Child::wait` and `::try_wait` in addition to the internal pgid-based logic, to help with cancellation.
+- Grouped child `wait`s using upstream `::wait` and `::try_wait` in addition to the internal pgid-based logic, to help with cancellation.
 
 ## v4.1.0 (2023-11-05)
 

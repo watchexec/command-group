@@ -1,6 +1,6 @@
 use std::{
 	convert::TryInto,
-	io::{Error, ErrorKind, Read, Result},
+	io::{Error, Read, Result},
 	os::{
 		fd::BorrowedFd,
 		unix::{
@@ -117,18 +117,21 @@ impl ChildImp {
 	}
 
 	pub fn wait(&mut self) -> Result<ExitStatus> {
-		self.wait_imp(WaitPidFlag::empty())
-			.transpose()
-			.unwrap_or_else(|| {
-				Err(Error::new(
-					ErrorKind::Other,
-					"blocking waitpid returned pid=0",
-				))
-			})
+		if let Some(status) = self.try_wait()? {
+			return Ok(status);
+		}
+
+		match self.wait_imp(WaitPidFlag::empty()).transpose() {
+			None => self.inner.wait(),
+			Some(status) => status,
+		}
 	}
 
 	pub fn try_wait(&mut self) -> Result<Option<ExitStatus>> {
-		self.wait_imp(WaitPidFlag::WNOHANG)
+		match self.wait_imp(WaitPidFlag::WNOHANG) {
+			Ok(None) => self.inner.try_wait(),
+			otherwise => otherwise,
+		}
 	}
 
 	pub(super) fn read_both(
