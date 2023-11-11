@@ -1,6 +1,6 @@
 use std::{
 	convert::TryInto,
-	io::{Error, ErrorKind, Result},
+	io::{Error, Result},
 	os::unix::process::ExitStatusExt,
 	process::ExitStatus,
 };
@@ -115,20 +115,25 @@ impl ChildImp {
 	}
 
 	pub async fn wait(&mut self) -> Result<ExitStatus> {
+		if let Some(status) = self.try_wait()? {
+			return Ok(status);
+		}
+
 		let pgid = self.pgid.as_raw();
-		spawn_blocking(move || Self::wait_imp(pgid, WaitPidFlag::empty()))
+		match spawn_blocking(move || Self::wait_imp(pgid, WaitPidFlag::empty()))
 			.await?
 			.transpose()
-			.unwrap_or_else(|| {
-				Err(Error::new(
-					ErrorKind::Other,
-					"blocking waitpid returned pid=0",
-				))
-			})
+		{
+			None => self.inner.wait().await,
+			Some(status) => status,
+		}
 	}
 
 	pub fn try_wait(&mut self) -> Result<Option<ExitStatus>> {
-		Self::wait_imp(self.pgid.as_raw(), WaitPidFlag::WNOHANG)
+		match Self::wait_imp(self.pgid.as_raw(), WaitPidFlag::WNOHANG) {
+			Ok(None) => self.inner.try_wait(),
+			otherwise => otherwise,
+		}
 	}
 }
 
