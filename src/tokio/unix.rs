@@ -17,7 +17,7 @@ impl CommandGroupBuilder<'_, tokio::process::Command> {
 	///
 	/// ```no_run
 	/// use tokio::process::Command;
-	/// use command_group::CommandGroup;
+	/// use command_group::AsyncCommandGroup;
 	///
 	/// Command::new("ls")
 	///         .group()
