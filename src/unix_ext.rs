@@ -45,11 +45,11 @@ pub trait UnixChildExt {
 	/// ```
 	///
 	/// [`InvalidInput`]: std::io::ErrorKind::InvalidInput
-	fn signal(&mut self, sig: Signal) -> Result<()>;
+	fn signal(&self, sig: Signal) -> Result<()>;
 }
 
 impl UnixChildExt for Child {
-	fn signal(&mut self, sig: Signal) -> Result<()> {
+	fn signal(&self, sig: Signal) -> Result<()> {
 		let pid = Pid::from_raw(self.id().try_into().expect("Command PID > i32::MAX"));
 		kill(pid, sig).map_err(Error::from)
 	}
@@ -57,7 +57,7 @@ impl UnixChildExt for Child {
 
 #[cfg(feature = "with-tokio")]
 impl UnixChildExt for ::tokio::process::Child {
-	fn signal(&mut self, sig: Signal) -> Result<()> {
+	fn signal(&self, sig: Signal) -> Result<()> {
 		if let Some(id) = self.id() {
 			let pid = Pid::from_raw(id.try_into().expect("Command PID > i32::MAX"));
 			kill(pid, sig).map_err(Error::from)

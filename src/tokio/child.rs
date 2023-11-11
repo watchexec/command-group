@@ -363,7 +363,7 @@ impl AsyncGroupChild {
 
 #[cfg(unix)]
 impl crate::UnixChildExt for AsyncGroupChild {
-	fn signal(&mut self, sig: Signal) -> Result<()> {
+	fn signal(&self, sig: Signal) -> Result<()> {
 		self.imp.signal_imp(sig)
 	}
 }

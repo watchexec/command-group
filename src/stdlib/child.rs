@@ -311,7 +311,7 @@ impl GroupChild {
 
 #[cfg(unix)]
 impl UnixChildExt for GroupChild {
-	fn signal(&mut self, sig: Signal) -> Result<()> {
+	fn signal(&self, sig: Signal) -> Result<()> {
 		self.imp.signal_imp(sig)
 	}
 }

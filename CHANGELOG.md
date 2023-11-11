@@ -2,6 +2,8 @@
 
 ## Next (YYYY-MM-DD)
 
+- Change `UnixChildExt::signal` to take `&self` instead of `&mut self`.
+
 ## v4.1.0 (2023-11-05)
 
 - Add `ErasedChild::id()` method.

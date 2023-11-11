@@ -55,7 +55,7 @@ impl ChildImp {
 		self.inner
 	}
 
-	pub(super) fn signal_imp(&mut self, sig: Signal) -> Result<()> {
+	pub(super) fn signal_imp(&self, sig: Signal) -> Result<()> {
 		killpg(self.pgid, sig).map_err(Error::from)
 	}
 
@@ -202,11 +202,11 @@ impl ChildImp {
 }
 
 pub trait UnixChildExt {
-	fn signal(&mut self, sig: Signal) -> Result<()>;
+	fn signal(&self, sig: Signal) -> Result<()>;
 }
 
 impl UnixChildExt for ChildImp {
-	fn signal(&mut self, sig: Signal) -> Result<()> {
+	fn signal(&self, sig: Signal) -> Result<()> {
 		self.signal_imp(sig)
 	}
 }
