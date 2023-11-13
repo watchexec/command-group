@@ -39,6 +39,13 @@ impl Drop for JobPort {
 unsafe impl Send for JobPort {}
 unsafe impl Sync for JobPort {}
 
+#[derive(Copy, Clone)]
+#[repr(transparent)]
+pub(crate) struct ThreadSafeRawHandle(pub HANDLE);
+
+unsafe impl Send for ThreadSafeRawHandle {}
+unsafe impl Sync for ThreadSafeRawHandle {}
+
 pub(crate) fn res_null(handle: HANDLE) -> Result<HANDLE> {
 	if handle.is_null() {
 		Err(Error::last_os_error())
