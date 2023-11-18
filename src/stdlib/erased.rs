@@ -79,7 +79,7 @@ impl ErasedChild {
 	/// - Grouped: [`GroupChild::signal`]
 	/// - Ungrouped: [`Child::signal`]
 	#[cfg(unix)]
-	pub fn signal(&mut self, sig: crate::Signal) -> Result<()> {
+	pub fn signal(&self, sig: crate::Signal) -> Result<()> {
 		use crate::UnixChildExt;
 
 		match self {
