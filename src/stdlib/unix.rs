@@ -24,11 +24,6 @@ impl CommandGroupBuilder<'_, Command> {
 	///         .expect("ls command failed to start");
 	/// ```
 	pub fn spawn(&mut self) -> std::io::Result<GroupChild> {
-		unsafe {
-			self.command
-				.pre_exec(|| setsid().map_err(Error::from).map(|_| ()));
-		}
-
-		self.command.spawn().map(GroupChild::new)
+		self.command.process_group(0).spawn().map(GroupChild::new)
 	}
 }

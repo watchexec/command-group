@@ -21,7 +21,7 @@ impl CommandGroupBuilder<'_, tokio::process::Command> {
 	///
 	/// Command::new("ls")
 	///         .group()
-	/// 		.spawn()
+	///         .spawn()
 	///         .expect("ls command failed to start");
 	/// ```
 	pub fn spawn(&mut self) -> std::io::Result<AsyncGroupChild> {
