@@ -1,7 +1,6 @@
-use std::{io::Error, os::unix::process::CommandExt, process::Command};
+use std::{os::unix::process::CommandExt, process::Command};
 
 use crate::{builder::CommandGroupBuilder, GroupChild};
-use nix::unistd::setsid;
 
 impl CommandGroupBuilder<'_, Command> {
 	/// Executes the command as a child process group, returning a handle to it.

@@ -1,8 +1,5 @@
-use std::io::Error;
-
 use crate::builder::CommandGroupBuilder;
 use crate::AsyncGroupChild;
-use nix::unistd::setsid;
 
 impl CommandGroupBuilder<'_, tokio::process::Command> {
 	/// Executes the command as a child process group, returning a handle to it.
@@ -25,9 +22,20 @@ impl CommandGroupBuilder<'_, tokio::process::Command> {
 	///         .expect("ls command failed to start");
 	/// ```
 	pub fn spawn(&mut self) -> std::io::Result<AsyncGroupChild> {
+		#[cfg(tokio_unstable)]
+		{
+			self.command.process_group(0);
+		}
+
+		#[cfg(not(tokio_unstable))]
 		unsafe {
-			self.command
-				.pre_exec(|| setsid().map_err(Error::from).map(|_| ()));
+			use nix::unistd::{setpgid, Pid};
+			use std::io::Error;
+			self.command.pre_exec(|| {
+				setpgid(Pid::this(), Pid::from_raw(0))
+					.map_err(Error::from)
+					.map(|_| ())
+			});
 		}
 
 		self.command.spawn().map(AsyncGroupChild::new)
