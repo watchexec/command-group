@@ -2,7 +2,7 @@
 
 ## Next (YYYY-MM-DD)
 
-- Use [std's `process_group()`](doc.rust-lang.org/std/os/unix/process/trait.CommandExt.html#tymethod.process_group) (since rustc 1.64).
+- Use [std's `process_group()`](doc.rust-lang.org/std/os/unix/process/trait.CommandExt.html#tymethod.process_group) ([#16](https://github.com/watchexec/command-group/issues/16)).
 
 ## v5.0.0 (2023-11-18)
 
