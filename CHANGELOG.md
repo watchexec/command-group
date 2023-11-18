@@ -4,6 +4,9 @@
 
 - Change `UnixChildExt::signal` to take `&self` instead of `&mut self`.
 - Grouped child `wait`s using upstream `::wait` and `::try_wait` in addition to the internal pgid-based logic, to help with cancellation.
+- Optimisations in `tokio::Child::wait()`. ([#25](https://github.com/watchexec/command-group/issues/25), [#26](https://github.com/watchexec/command-group/issues/26))
+
+
 
 ## v4.1.0 (2023-11-05)
 
