@@ -21,6 +21,16 @@ impl<'a, T> CommandGroupBuilder<'a, T> {
 		}
 	}
 
+	/// Get a reference to the command contained in this builder.
+	pub fn command(&self) -> &T {
+		&*self.command
+	}
+
+	/// Get a mutable reference to the command contained in this builder.
+	pub fn command_mut(&mut self) -> &mut T {
+		self.command
+	}
+
 	/// See [`tokio::process::Command::kill_on_drop`].
 	#[cfg(any(windows, feature = "with-tokio"))]
 	pub fn kill_on_drop(&mut self, kill_on_drop: bool) -> &mut Self {

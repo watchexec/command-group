@@ -26,6 +26,7 @@ mod unix_ext;
 pub mod tokio;
 
 pub mod builder;
+pub use builder::CommandGroupBuilder;
 
 #[cfg(windows)]
 pub(crate) mod winres;
