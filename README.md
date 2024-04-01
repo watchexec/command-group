@@ -11,6 +11,7 @@ _Extension to [`Command`](https://doc.rust-lang.org/std/process/struct.Command.h
 - Minimum Supported Rust Version: 1.68.0.
   - Only the last five stable versions are supported.
   - MSRV increases within that range at publish time will not incur major version bumps.
+- Soft-launch: the successor of command-group is [process-wrap](https://github.com/watchexec/process-wrap). No further work will be done on command-group.
 
 [copyright]: ./COPYRIGHT
 [docs]: https://docs.rs/command-group
