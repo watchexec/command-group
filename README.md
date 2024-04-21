@@ -2,6 +2,8 @@
 [![Crate license: Apache 2.0 or MIT](https://flat.badgen.net/badge/license/Apache%202.0%20or%20MIT)][copyright]
 [![CI status](https://github.com/watchexec/command-group/actions/workflows/test.yml/badge.svg)](https://github.com/watchexec/command-group/actions/workflows/test.yml)
 
+***The successor of command-group is [process-wrap](https://github.com/watchexec/process-wrap). No further work will be done on command-group.***
+
 # Command Group
 
 _Extension to [`Command`](https://doc.rust-lang.org/std/process/struct.Command.html) to spawn in a process group._
@@ -11,7 +13,6 @@ _Extension to [`Command`](https://doc.rust-lang.org/std/process/struct.Command.h
 - Minimum Supported Rust Version: 1.68.0.
   - Only the last five stable versions are supported.
   - MSRV increases within that range at publish time will not incur major version bumps.
-- Soft-launch: the successor of command-group is [process-wrap](https://github.com/watchexec/process-wrap). No further work will be done on command-group.
 
 [copyright]: ./COPYRIGHT
 [docs]: https://docs.rs/command-group
